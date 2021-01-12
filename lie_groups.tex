@@ -62,6 +62,7 @@
   \item f is continuous
   \item the inverse function $\inv{f}$ is continuous 
   \end{itemize}
+  If such a function exists, $X$ and $Y$ are said to be \textbf{homeomorphic}.
 \end{defn}
 
 \begin{defn}
@@ -93,18 +94,38 @@
   Points x and y in a topological space $X$ can be \textbf{separated by neighborhoods}
   if there exists a neighborhood $U$ of $x$ and $V$ of $y$ such that $U \cap V = \emptyset$
 \end{defn}
-
 \begin{defn}
   $X$ is a \textbf{Hausdorff space} if all distinct points in $X$ can be separated by neighborhoods.
 \end{defn}
-
 \begin{defn}
-  A \textbf{topological manifold} is a second countable Hausdorff space that is locally homeomorphic to Euclidean space. Locally homeomorphic means that every point has a neighborhood homeomorphic to an open Euclidean n-ball
-  \begin{center}
-    $B_n = \set{(x_1,x_2,\dots,x_n) \in \real^n | x_1^2 + x_2^2 + \cdots + x_n^2 < 1}.$
-  \end{center}
+  A topological space $X$  is called \textbf{locally Euclidean} if there is a non-negative integer $n$ such that every point in $X$ has a neighbourhood wihch is homeomorphic to $\real^n$.
 \end{defn}
 
+\begin{defn}
+  A \textbf{topological manifold} is a locally Euclidean Hausdorff space. 
+\end{defn}
+\begin{defn}
+  Let $M$  be a topological space. A \textbf{chart} (U, $\phi$) on $M$ consists of an open subset $U$ of M, and a homeomorphism $\varphi$ from $U$ to an open subset of some Euclidean space $\real^n$.
+\end{defn}
+
+\begin{defn}
+  A differentiable  \textbf{atlas}  is a collection of charts $\set{\varphi_{\alpha} : U_{\alpha} \to  \real^n}_{\alpha \in A}$ such that $\set{U_{\alpha}}_{\alpha \in A}$  covers $M$, and such  that for all  $\alpha$
+  and $\beta$ in $A$, the transition map $\varphi_{\alpha} \circ \inv{\varphi_{\beta}}$ is a smooth ($C^{\infty}$) map.
+\end{defn}
+
+%make diagram of the transition map of two charts.
+
+\begin{defn}
+  Given a differentiable atlas on a topological  space, one says that a chart is \textbf{differentiably compatible} with the atlas, if the  inclusion of the chart into the collection of charts that is the atlas results in another differentiable atlas.
+\end{defn}
+
+\begin{defn}
+  A differential atlas determines a \textbf{maximal differentiable atlas}, consisting of all charts which are differentiably compatible with the given atlas.
+\end{defn}
+
+\begin{defn}
+  A \textbf{differentiable manifold} is a Hausdorff and  second countable topological space  $M$, together  with a maximal differentiable  atlas on $M$.
+\end{defn}
 
 \begin{defn}
   A \textbf{real lie group} is a group that is also a finite-dimensional real smooth manifold, in which the group operations of multiplication and inversion are smooth maps. Smoothness of the group multplication
