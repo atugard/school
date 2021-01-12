@@ -1,0 +1,158 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref}
+\usetikzlibrary{positioning}
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\q}{\mathbb{Q}}
+\newcommand{\cx}{\mathbb{C}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\field}{\mathbb{F}}
+\newcommand{\ita}[1]{\textit{#1}}
+\newcommand{\com}[2]{#1\backslash#2}
+\newcommand{\oneton}{\{1,2,3,...,n\}}
+\newcommand{\abs}[1]{|#1|}
+\newcommand\idea[1]{\begin{gather*}#1\end{gather*}}
+\newcommand\ef{\ita{f} }
+\newcommand\eff{\ita{f}}
+\newcommand\proofs[1]{\begin{proof}#1\end{proof}}
+\newcommand\inv[1]{#1^{-1}}
+\newcommand\set[1]{\{#1\}}
+\newcommand\en{\ita{n }}
+\newcommand{\vbrack}[1]{\langle #1\realangle}
+
+\realenewcommand\qedsymbol{$\blacksquare$}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{defn}{Definition}[thm]
+\newtheorem*{remark}{Remark}
+\newtheorem{prop}{Proposition}[thm]
+\newtheorem{example}{Example}[thm]
+\newtheorem{lemma}{Lemma}[thm]
+\newtheorem{exercise}{Exercise}[thm]
+\hypersetup{
+  colorlinks,
+  linkcolor=blue
+}
+\begin{document}
+\date{}
+
+ 
+\title{MAT 4144 Lie Groups}
+\author{Notes by: David Draguta
+  \\University of Ottawa\\ Prof: Dr. Tanya Schmah } 
+ 
+\maketitle
+\section{Introduction}
+
+\begin{defn}
+  A \textbf{topological space} is an ordered pair $(X, \tau)$, where $X$ is a set and $\tau$ is a collection of subsets of $X$, satisfying the following axioms.
+  \begin{enumerate}
+  \item The empty set and $X$ itself belong to $\tau$.
+  \item Any arbitrary (finite and infinite) union of members of $\tau$ still belongs to $\tau$.
+  \item The intersection of any finite number of members of $\tau$ still belongs to $\tau$.
+  \end{enumerate}
+\end{defn}
+
+\begin{defn}
+  A function $f: X \to Y$ between two topological spaces is a \textbf{homeomorphism} if it has the following properties:
+  \begin{itemize}
+  \item f is a bijection.
+  \item f is continuous
+  \item the inverse function $\inv{f}$ is continuous 
+  \end{itemize}
+\end{defn}
+
+\begin{defn}
+  A \textbf{cover} of a topological space $X$ is a collection $C = \set{U_{\alpha} : \alpha \in A}$ such that
+  \begin{center}
+    $X \subseteq \bigcup\limits_{\alpha \in A} U_{\alpha}$
+  \end{center}
+\end{defn}
+\begin{defn}
+  A \textbf{base} or \textbf{basis} for the topology $\tau$ of a topological space $(X,\tau)$ is a collection $B$ of open subsets of $X$ satisfying the following properties.
+  \begin{enumerate}
+  \item The base elements cover $X$
+  \item Let $B_1, B_2$ be base elements and let $I$ be their intersection. Then for each $x \in I$, there is a base element $B_3$ containing x such that $B_3$ is a subset of $I$.
+  \end{enumerate}
+\end{defn}
+
+\begin{defn}
+  A topological space $X$ is \textbf{second-countable} if its topology has a countable base.
+\end{defn}
+
+\begin{defn}
+  If $X$ is a topological space and $p$ is a point in $X$, a \textbf{neighbourhood}
+  of $p$ is a subset $V$ of $X$ that includes an open set $U$ containing p such that $ p \in U \subseteq V$
+\end{defn}
+\begin{remark}
+  In a topological space $(X, \tau)$, the open subsets are the elements of $\tau$.
+\end{remark}
+\begin{defn}
+  Points x and y in a topological space $X$ can be \textbf{separated by neighborhoods}
+  if there exists a neighborhood $U$ of $x$ and $V$ of $y$ such that $U \cap V = \emptyset$
+\end{defn}
+
+\begin{defn}
+  $X$ is a \textbf{Hausdorff space} if all distinct points in $X$ can be separated by neighborhoods.
+\end{defn}
+
+\begin{defn}
+  A \textbf{topological manifold} is a second countable Hausdorff space that is locally homeomorphic to Euclidean space. Locally homeomorphic means that every point has a neighborhood homeomorphic to an open Euclidean n-ball
+  \begin{center}
+    $B_n = \set{(x_1,x_2,\dots,x_n) \in \real^n | x_1^2 + x_2^2 + \cdots + x_n^2 < 1}.$
+  \end{center}
+\end{defn}
+
+
+\begin{defn}
+  A \textbf{real lie group} is a group that is also a finite-dimensional real smooth manifold, in which the group operations of multiplication and inversion are smooth maps. Smoothness of the group multplication
+\begin{center}
+  $\mu : G \times G \to G$,  $\mu(x,y)=xy$
+\end{center}
+  means that $\mu$ is a smooth mapping of the product manifold $G \times G$ into $G$.
+\end{defn}
+
+\begin{example}
+  The following are lie groups. It is an exercise to show that they are all isomorphic.
+\begin{itemize}
+\item
+  $S_1 = \set{(cos \theta, sin \theta) \in \real^2 : \theta \in [0,2\pi)}$, with operation
+  \begin{center}
+    $(cos \theta_1, sin \theta_1) * (cos \theta_2, sin \theta_2) = (cos (\theta_1 + \theta_2), sin (\theta_1 + \theta_2))$.
+  \end{center}
+ 
+\item
+    $S_{\cx}^1 = \set{z \in \cx : \abs{z} = 1}$, with operation complex multiplication.
+
+\item
+    $SO(2) = \set{ \begin{pmatrix}
+      cos \theta & - sin \theta\\
+      sin \theta & cos \theta 
+    \end{pmatrix} : \theta \in \real}$
+  , with operation matrix multiplication.
+\end{itemize}
+What's more, these are actually isomorphic as lie groups, which we shall see later. 
+\end{example}
+
+\begin{example}
+  Orthogonal groups are lie groups too.
+  \begin{itemize}
+  \item
+    $O(n) = \set{A \in M_n(\real) : A^TA = I}$
+  \item
+    $SO(n) = \set{A \in O(n) : det A = 1}$
+  \end{itemize}
+\end{example}
+\end{document}
+
+\begin{example}
+\end{example}
+
+
+
+
+
+
+
