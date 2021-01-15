@@ -2,7 +2,9 @@
  
 \usepackage[margin=1in]{geometry} 
 \usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref}
+
 \usetikzlibrary{positioning}
+
 \newcommand{\n}{\mathbb{N}}
 \newcommand{\z}{\mathbb{Z}}
 \newcommand{\q}{\mathbb{Q}}
@@ -13,6 +15,7 @@
 \newcommand{\com}[2]{#1\backslash#2}
 \newcommand{\oneton}{\{1,2,3,...,n\}}
 \newcommand{\abs}[1]{|#1|}
+\newcommand{\card}[1]{|#1|}
 \newcommand\idea[1]{\begin{gather*}#1\end{gather*}}
 \newcommand\ef{\ita{f} }
 \newcommand\eff{\ita{f}}
@@ -21,8 +24,9 @@
 \newcommand\set[1]{\{#1\}}
 \newcommand\en{\ita{n }}
 \newcommand{\vbrack}[1]{\langle #1\realangle}
-
-\realenewcommand\qedsymbol{$\blacksquare$}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\res}[2]{#1\bigg\rvert_{#2}}
+\newcommand{\im}[0]{\text{im}}
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{defn}{Definition}[thm]
@@ -35,16 +39,347 @@
   colorlinks,
   linkcolor=blue
 }
+\setcounter{tocdepth}
+           {3}% Show ToC content up to level 3 (\subsubsection)
+
 \begin{document}
+\tableofcontents
 \date{}
 
- 
 \title{MAT 4144 Lie Groups}
 \author{Notes by: David Draguta
   \\University of Ottawa\\ Prof: Dr. Tanya Schmah } 
  
 \maketitle
-\section{Introduction}
+\section{Preliminaries}
+
+
+\subsection{Linear Algebra}
+\begin{defn}
+  The \textbf{column space} of a matrix $A \in M_{m \times n}(\mathbb{F})$ is the $\mathbb{F}$-span of its column vectors. The \textbf{row space} of a matrix $A$ is the $\mathbb{F}$-span its row vectors. 
+\end{defn}
+\begin{remark}
+  Let $A$ be as in the previous definition. Then its  column space is a linear subspace of $\mathbb{F}^m$ and its row space is a linear subspace of $\mathbb{F}^n$.
+\end{remark}
+\begin{defn}
+  The \textbf{column rank} of a matrix $A$ is the dimension of its column space, and $\textbf{row rank}$ is the dimension of its row space.
+\end{defn}
+\begin{lemma}[Steinitz exchange lemma]
+  Let $U= \set{u_1, \dots, u_m}$ be a set of $m$ linearly independent vectors in a vector space $V$,
+  and let $W=\set{w_1, \dots, w_n}$ span $V$, then
+  \begin{enumerate}
+  \item $m \leq n$, 
+  \item There is a set $W' \subseteq W$ with $\card{W'} = n - m$ such that $U \cup W'$ spans $V$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  Want to show that for $k = 0,\dots, m$, we have $k \leq n$ and
+  \begin{equation*}
+    V = \text{span}(\set{u_1, \dots, u_k, w_{k+1}, \dots, w_n})
+  \end{equation*}
+
+  , where the $w_i$ have been possibly reordered, with the reordering depending on $k$. We  proceed by induction. \\
+  For $k=0$ there is nothing to show. \\
+  For the inductive step, assume the proposition for $k<m$. By induction $ \set{u_1, \dots, u_k, w_{k+1}, \dots, w_n}$ spans $V$. Thus, we can find $\alpha_1, \dots, \alpha_n$ such that
+  \begin{equation*}
+    u_{k+1} = \sum\limits_{j=1}^k \alpha_ju_j + \sum\limits_{j={k+1}}^n \alpha_j w_j.
+  \end{equation*}
+  By linear independence of the $u_i$ there must exist at least one non-zero element among the $\set{\alpha_{k+1}, \dots, \alpha_n}$. This implies additionally that $k<n$ or $k+1 \leq n$. Assume without loss of generality that $\alpha_{k+1}$ is non-zero. We get
+  \begin{equation*}
+    w_{k+1} = \cfrac{1}{\alpha_{k+1}}(u_{k+1} -  \sum\limits_{j=1}^k \alpha_ju_j + \sum\limits_{j={k+2}}^n \alpha_j w_j)
+  \end{equation*}
+  Thus, $w_{k+1} \in  \text{span}(\set{u_1, \dots, u_{k+1},  w_{k+2}, \dots, w_n})$, which implies that
+  \begin{equation*}
+    \set{u_1, \dots,  u_k, w_{k+1}, \dots, w_n} \subseteq \text{span}(\set{u_1, \dots, u_{k+1},  w_{k+2}, \dots, w_n})
+  \end{equation*}
+  so
+  \begin{equation*}
+    V = \text{span}(\set{u_1, \dots,  u_k, w_{k+1}, \dots, w_n}) \subseteq \text{span}(\set{u_1, \dots, u_{k+1},  w_{k+2}, \dots, w_n}) \subseteq V
+  \end{equation*}
+  so
+  \begin{equation*}
+    V = \text{span}(\set{u_1, \dots, u_{k+1},  w_{k+2}, \dots, w_n})
+  \end{equation*}
+\end{proof}
+\begin{remark}
+  Let's take a closer look at matrix multiplication. In the simple case of $2 \times 2$ matrices we have
+\begin{align*}
+    \begin{pmatrix}
+      a_{11} & a_{12} \\
+      a_{21} & a_{22}
+    \end{pmatrix}
+    \begin{pmatrix}
+      b_{11} & b_{12} \\
+      b_{21} & b_{22}
+    \end{pmatrix}
+    &=
+    \begin{pmatrix}
+      a_{11}b_{11}+a_{12}b_{21} & a_{11}b_{12}+a_{12}b_{22} \\
+      a_{21}b_{11}+a_{22}b_{21} & a_{21}b_{12}+a_{22}b_{22}
+    \end{pmatrix}
+    \\
+   &=
+    \begingroup
+    \left(
+    \begin{array}{c|c}
+      b_{11}
+      \begin{pmatrix}
+        a_{11} \\
+        a_{21}
+      \end{pmatrix}
+      +
+      b_{21}
+      \begin{pmatrix}
+        a_{12} \\
+        a_{22}
+      \end{pmatrix}
+      &
+      b_{12}
+      \begin{pmatrix}
+        a_{11} \\
+        a_{21}
+      \end{pmatrix}
+      +
+      b_{22}
+      \begin{pmatrix}
+        a_{12} \\
+        a_{22}
+      \end{pmatrix}
+    \end{array}
+    \right)
+    \endgroup
+    \\
+    &=
+    \begin{pmatrix}
+      a_{11}(b_{11}, b_{12}) + a_{12}(b_{21}, b_{22}) \\
+      \\
+      \hline \\
+      a_{21}(b_{11}, b_{12}) + a_{22}(b_{21}, b_{22})
+    \end{pmatrix}
+\end{align*}
+and in general for $A \in M_{m \times n}(\field)$ with rows  $(a_{j1}, \dots, a_{jn})$ and columns $C_i$,
+and $B \in M_{n \times k}(\field)$ with rows $R_j$ and columns $(b_{1i}, \dots, b_{ni})^T$ we have 
+
+\begin{equation*}
+  AB =
+    \begingroup
+    \left(
+    \begin{array}{c|c|c|c|c}
+      \sum\limits_{i=1}^nb_{i1}C_i & \cdots &  \sum\limits_{i=1}^nb_{ij}C_i & \cdots & \sum\limits_{i=1}^nb_{ik}C_i
+    \end{array}
+    \right)
+    \endgroup
+    =
+    \begin{pmatrix}
+      \sum\limits_{i=1}^na_{1i} R_i 
+      \\
+      \hline
+      \\
+      \vdots
+      \\
+      \hline
+      \\
+      \sum\limits_{i=1}^na_{li} R_i
+      \\
+      \hline
+      \\
+      \vdots
+      \\
+      \hline
+      \\
+      \sum\limits_{i=1}^na_{mi}R_i
+      \\
+    \end{pmatrix}
+\end{equation*}
+i.e. the $j$th column in $AB$ is a linear combination of the columns of $A$ with coefficients coming from the $j$th column of $B$,and the $l$th row in $AB$ is a linear combination of the rows of $B$ with coefficients coming from the $l$th column of $A$. We'll use this in the proof of the following proposition.
+\end{remark}
+
+\begin{prop}
+  The column rank of a matrix equals its row rank.
+\end{prop}
+\begin{proof}
+  Let $A \in M_{m \times n}(\field)$.  Let the column rank of $A$ be $r$ and the row rank $s$. Let $C_1, \dots, C_r$ be a basis for
+  the column space of $A$. Let $C=(C_i)_{1\leq i \leq r} \in M_{m \times r}$. Every column of $A$ can be expressed as a linear combination of columns from $C$ which (as we saw in the previous remark) means that we can find a matrix $B$ such that $A=CB$, where the $j$th column of $B$
+  contains the coefficients of the linear combination of the $C_i$'s that give us the $j$th column of
+  $A$. The $l$th row of $A$ is given by a linear combination of the rows of $B$ with coefficients coming from the $l$th  row of $C$ (which we also saw in the previous remark). Thus, the rows of $B$ span the rows of $A$,
+  and therefore form a spanning set of the row space of $A$. By the Steinitz exchange lemma we get that the row rank of $A$ is $\leq$ r, that is $s \leq r$.
+  Now, by the same argument the row rank of $A^T$ must be $\leq$ it's column rank, i.e. $r \leq s$. Thus we conclude that $r=s$.
+\end{proof}
+
+\begin{defn}
+  The \textbf{rank} of a matrix $M$ is defined as its column or row rank. The rank of a linear transformation is defined as the dimension of its image.
+\end{defn}
+
+\begin{thm}[Rank nullity theorem]
+  Let $V, W$ be vector spaces, where $V$ is finite dimensional. Let $T :V \to W$ be a linear transformation. Then
+  \begin{equation*}
+    \text{rank}(T) + \text{nullity}(T) = \dim(V),
+  \end{equation*}
+  where
+  \begin{equation*}
+    \text{rank}(T) := \dim(\im(T)), \quad \text{nullity}(T) := \dim(\ker(T))
+  \end{equation*}
+\end{thm}
+\begin{proof}
+  Let $V, W$ be vector spaces over some field $\field$, $\dim(V)=n$, and $T :V \to W$ a linear transformation.
+  Since $\ker(T) \subseteq V$ is a subspace, there exists a basis for it in $V$. Let $\dim(\ker(T)) = k$ and
+  \begin{equation*}
+    K := \set{v_1, \dots, v_k} \subseteq \ker(T)
+  \end{equation*}
+  be a basis. \\
+  We apply the Steinitz exchange lemma to extend $K$ by $n-k$ linearly independent vectors
+  $w_1, \dots, w_{n-k}$ to a basis of $V$. \\
+  Let
+  \begin{equation*}
+    S := \set{w_1, \dots, w_{n-k}} \subseteq V \setminus \ker(T)
+  \end{equation*}
+  such that
+  \begin{equation*}
+    B := K \cup S \subseteq V
+  \end{equation*}
+  is a basis for $V$. We have that
+  \begin{align*}
+    \im(T) &= \text{span}(T(B)) = \text{span}(T(v_1), \dots, T(v_k), T(w_1), \dots, T(w_{n-k})) \\
+    &= \text{span}(T(w_1), \dots, T(w_{n-k})) \\
+    &= \text{span}(T(S)).
+  \end{align*}
+  It remains to show that $T(S) = \set{T(w_1), \dots, T(w_{n-k})}$ are linearly independent. \\
+  Let
+  \begin{equation*}
+    \sum\limits_{j=1}^{n-k}\alpha_j T(w_j) = 0, \quad \alpha_j \in \field.
+  \end{equation*}
+  Then
+  \begin{equation*}
+   T(\sum\limits_{j=1}^{n-k}\alpha_j w_j) = 0,
+  \end{equation*}
+  so that
+  \begin{equation*}
+    \sum\limits_{j=1}^{n-k}\alpha_j w_j \in \ker(T) = \text{span}(K).
+  \end{equation*}
+  As $B$ is a basis it must be that $\alpha_j = 0$ for all $j$. That is $T(S)$ is a basis for $\im(T)$.\\
+  Thus
+  \begin{align*}
+    \text{rank}(T) + \text{nullity}(T)
+    &= \dim(\im(T)) + \dim(\ker(T)) = \card{S} + \card{K} = \card {K \cup S} = \card{B} = n \\
+    &= \dim(V)
+  \end{align*}
+  
+\end{proof}
+
+\begin{remark}
+  We have that $M_{m \times n}(\field) \cong \hom(\field^n, \field^m)$, as vector spaces, which is given by the linear map
+  \begin{equation*}
+    f: M_{m \times n}(\field) \to \hom(\field^n, \field^m), \quad f(A)v = Av.
+  \end{equation*}
+  Thus, the rank-nullity theorem applies to matrices.
+\end{remark}
+\subsection{Calculus}
+
+\begin{defn}
+  The \textbf{partial derivative} of a function $f(x_1,\dots,x_n)$ in the direction $x_i$ at the point $(a_1, \dots, a_n)$ is defined to be:
+  \begin{center}
+    $\cfrac{\partial f}{\partial x_i}(a_1, \dots, a_n) = \lim\limits_{h \to 0} \cfrac{f(a_1,\dots, a_i + h, \dots, a_n) - f(a_1, \dots, a_i, \dots, a_n)}{h}$
+  \end{center}
+\end{defn}
+
+\begin{defn}
+  $f: \real^m \to \real^n$ is said to be \textbf{differentiable} at $x_0$ if there exists a linear map $J_f : \real^m \to \real^n$ such that
+  \begin{center}
+    $\lim\limits_{h \to 0} \cfrac{\norm{f(x_0 + h) - f(x_0) - J_f(h)}_{\real^n}}{\norm{h}_{\real^m}} = 0$.    
+  \end{center}
+  This map is called the Jacobian and is given by:
+  \begin{center}
+    $J_f =
+    \begin{pmatrix}
+      \cfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \cfrac{\partial \mathbf{f}}{\partial x_n}
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+      (\nabla f_1)^T \\
+      \vdots &       \\
+      (\nabla f_m)^T 
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+      \cfrac{\partial f_1}{\partial x_1} & \cdots & \cfrac{\partial f_1}{\partial x_n} \\
+      \vdots & \ddots & \vdots \\ 
+      \cfrac{\partial f_m}{\partial x_1} & \cdots & \cfrac{\partial f_m}{\partial x_n} \\
+    \end{pmatrix}$
+  \end{center}.
+\end{defn}
+
+\begin{remark}
+  If all of the partial derivatives exist \textbf{and} are continuous then the function is differentiable at the point in its domain. The existence of the partial at the point in the domain does not in general imply differentiability at that point.
+\end{remark}
+\begin{defn}
+  $f: U \subseteq \real^m \to \real^n$ is differentiable on $U$ if it is differentiable at each $x \in U$.
+\end{defn}
+
+\begin{defn}
+  A function $f: U \subseteq\real^n \to \real$, where $U$ is an open subset of $\real^n$, is said to be of class $C^k$ on $U$, for a positive integer $k$, if all partial derivatives
+  \begin{center}
+    $\cfrac{\partial^{\alpha}f}{\partial x_1^{\alpha_1}\partial x_2^{\alpha_2}\cdots\partial x_n^{\alpha_n}}(y_1,y_2,\dots,y_n)$
+    
+  \end{center}
+  exist and are continuous, for $\alpha_1, \alpha_2, \dots, \alpha_n $ non-negative integers, $\alpha = \sum\limits_{i=1}^n \alpha_i \leq k$
+, and $(y_1,y_2,\dots,y_n) \in U$.
+\end{defn}
+
+\begin{defn}
+  A function $f: U \subseteq \real^n \to \real^m$, where $U$ is an open subset of $\real^n$, is said to be of class $C^k$ on $U$, for a positive integer $k$, if all of its components
+  \begin{center}
+    $f_i(x_1,x_2,\dots,x_n) = (\pi_i \circ f)(x_1,x_2,\dots,x_n)$, for $i=1, 2, \dots, m$,
+  \end{center}
+  are of class $C^k$, where
+
+  \begin{center}
+    $\pi_i: \real^m \to \real, (x_1,x_2,\dots,x_n) \mapsto x_i$
+  \end{center}
+
+  is the natural projection onto the i-th coordinate.
+\end{defn}
+
+\begin{indent}
+  Let $f: \real^{n+m} \to \real^m$ be a continuously differentiable function. We think of $\real^{n+m}$ as $\real^n \times \real^m$ and write $(\mathbf{x},\mathbf{y}) = (x_1, \dots, x_n, y_1, \dots, y_m)$. We fix a point
+  $(\mathbf{a}, \mathbf{b}) \in \real^n \times \real^m$ satisfying $f(\mathbf{a},\mathbf{b})=\mathbf{0}$. We want open sets $U \in \real^n$ containing $\mathbf{a}$ and $V \in \real^m$ containing $\mathbf{b}$, and $g: U \to V$ such that:
+  \begin{center}
+    $\set{(\mathbf{x}, g(\mathbf{x})) : \mathbf{x} \in U} = \set{(\mathbf{x}, \mathbf{y}) \in U \times V :  f(\mathbf{x}, \mathbf{y}) = \mathbf{0}}$.
+  \end{center}
+  Our final piece of notation is
+  \begin{equation*}
+    (J_{f,\mathbf{x}}(\mathbf{a}, \mathbf{b}) \vert J_{f,\mathbf{y}}(\mathbf{a},\mathbf{b}))= 
+    \begingroup
+    \left(
+    \begin{array}{ccc|ccc}
+      \cfrac{\partial f_1}{\partial x_1}(\mathbf{a},\mathbf{b}) & \cdots & \cfrac{\partial f_1}{\partial x_n}(\mathbf{a},\mathbf{b}) & \cfrac{\partial f_1}{\partial y_1}(\mathbf{a},\mathbf{b}) & \cdots & \cfrac{\partial f_1}{\partial y_m}(\mathbf{a},\mathbf{b}) \\
+      \vdots & \ddots & \vdots                                     & \vdots & \ddots & \vdots\\
+      \cfrac{\partial f_m}{\partial x_1}(\mathbf{a},\mathbf{b}) & \cdots & \cfrac{\partial f_m}{\partial x_n}(\mathbf{a},\mathbf{b}) &  \cfrac{\partial f_m}{\partial y_1}(\mathbf{a},\mathbf{b}) & \cdots & \cfrac{\partial f_m}{\partial y_m}(\mathbf{a},\mathbf{b})
+    \end{array}
+    \right)
+    \endgroup
+  \end{equation*}
+  where
+  \begin{equation*}
+        (J_{f,\mathbf{x}}(\mathbf{a}, \mathbf{b}) \vert J_{f,\mathbf{y}}(\mathbf{a},\mathbf{b}))= J_f(\mathbf{a}, \mathbf{b})
+  \end{equation*}
+  is just the Jacobian of $f$ at $(\mathbf{a}, \mathbf{b})$.
+\end{indent}
+\begin{thm}{\textbf{Implicit Function Theorem}}
+
+  Let $f : \real^{n+m} \to \real^m$ be a continuously differentiable function, and let  $\real^{n+m}$ have coordinates $(\mathbf{x}, \mathbf{y})$. Fix a point $(\mathbf{a},\mathbf{b})=(a_1,\dots,a_n,b_1,\dots,b_m)$ with
+  $f(\mathbf{a},\mathbf{b}) = \mathbf{0}$, for $\mathbf{0} \in \real^m$. If the Jacobian matrix
+  \begin{equation*}
+    J_{f,\mathbf{y}}(\mathbf{a},\mathbf{b}) =
+    \begin{pmatrix}
+      \cfrac{\partial f_i}{\partial y_j}(\mathbf{a}, \mathbf{b})
+    \end{pmatrix}
+  \end{equation*}
+  is invertible, then there exists an open set $U \subseteq \real^n$ containing $\textbf{a}$ such that there exists a unique continuously differentiable function $g: U \to \real^m$ such that $g(\mathbf{a}) = \mathbf{b}$, and  $f(\mathbf{x},g(\mathbf{x})) = 0$ for all $\mathbf{x} \in U$.
+\end{thm}
+\begin{proof}
+  TODO.
+\end{proof}
+\subsection{Topology}
 
 \begin{defn}
   A \textbf{topological space} is an ordered pair $(X, \tau)$, where $X$ is a set and $\tau$ is a collection of subsets of $X$, satisfying the following axioms.
@@ -81,7 +416,7 @@
 
 \begin{defn}
   A topological space $X$ is \textbf{second-countable} if its topology has a countable base.
-\end{defn}
+n\end{defn}
 
 \begin{defn}
   If $X$ is a topological space and $p$ is a point in $X$, a \textbf{neighbourhood}
@@ -97,30 +432,25 @@
 \begin{defn}
   $X$ is a \textbf{Hausdorff space} if all distinct points in $X$ can be separated by neighborhoods.
 \end{defn}
-\begin{defn}
-  A topological space $X$  is called \textbf{locally Euclidean} if there is a non-negative integer $n$ such that every point in $X$ has a neighbourhood wihch is homeomorphic to $\real^n$.
-\end{defn}
+
+\subsection{Manifolds}
 
 \begin{defn}
-  A \textbf{topological manifold} is a locally Euclidean Hausdorff space. 
+  Let $M$  be a topological space. A \textbf{chart} (U, $\varphi$) on $M$ consists of an open subset $U$ of M, and a homeomorphism $\varphi$ from $U$ to an open subset of some Euclidean space $\real^n$.
 \end{defn}
+  
 \begin{defn}
-  Let $M$  be a topological space. A \textbf{chart} (U, $\phi$) on $M$ consists of an open subset $U$ of M, and a homeomorphism $\varphi$ from $U$ to an open subset of some Euclidean space $\real^n$.
-\end{defn}
-
-\begin{defn}
-  A differentiable  \textbf{atlas}  is a collection of charts $\set{\varphi_{\alpha} : U_{\alpha} \to  \real^n}_{\alpha \in A}$ such that $\set{U_{\alpha}}_{\alpha \in A}$  covers $M$, and such  that for all  $\alpha$
-  and $\beta$ in $A$, the transition map $\varphi_{\alpha} \circ \inv{\varphi_{\beta}}$ is a smooth ($C^{\infty}$) map.
+  A $\mathbf{C^k}$ \textbf{atlas} is a collection of charts $\set{\varphi_{\alpha} : U_{\alpha} \to  \real^n}_{\alpha \in A}$ such that $\set{U_{\alpha}}_{\alpha \in A}$  covers $M$, and such  that for all  $\alpha$
+  and $\beta$ in $A$, the transition map $\varphi_{\alpha} \circ \inv{\varphi_{\beta}}$ is a $C^k$ map.
 \end{defn}
 
 %make diagram of the transition map of two charts.
 
 \begin{defn}
-  Given a differentiable atlas on a topological  space, one says that a chart is \textbf{differentiably compatible} with the atlas, if the  inclusion of the chart into the collection of charts that is the atlas results in another differentiable atlas.
+  Given a $C^k$ atlas on a topological  space, one says that a chart is \textbf{differentiably compatible} with the atlas, if the  inclusion of the chart into the atlas results in another $C^k$  atlas.
 \end{defn}
-
-\begin{defn}
-  A differential atlas determines a \textbf{maximal differentiable atlas}, consisting of all charts which are differentiably compatible with the given atlas.
+\begin{defn}n
+  A $C^k$ atlas determines a \textbf{maximal differentiable atlas}, consisting of all charts which are differentiably compatible with the given atlas.
 \end{defn}
 
 \begin{defn}
@@ -128,7 +458,46 @@
 \end{defn}
 
 \begin{defn}
-  A \textbf{real lie group} is a group that is also a finite-dimensional real smooth manifold, in which the group operations of multiplication and inversion are smooth maps. Smoothness of the group multplication
+  Let $M$ be a differential manifold with maximal differentiable atlas $ \mathcal{A} = \set{(U_{\alpha}, \varphi_{\alpha}): \alpha \in \Gamma}$. A set $U \subseteq M$ is said to be \textbf{open} in $M$ if for all $\alpha \in \Gamma$ we have $\varphi_{\alpha}(U \cap U_{\alpha})$ is open in $\real^m$.
+\end{defn}
+\begin{defn}
+  Let $M$ be a $C^k$ differentiable manifold and $x \in M$. Pick a coordinate chart $\varphi : U \to \real^n$, where $U$ is an open subset of $M$ containing $x$. Let $\gamma_1, \gamma_2 : (-1,1) \to M$ be two curves on $M$ such that  $\varphi \circ \gamma_i: (-1,1) \to \real^n$ are differentiable. We define the equivalence relation $ \sim_x $ on them by
+  \begin{equation*}
+    \gamma_1 \sim_x \gamma_2 \iff \gamma_1(0) = \gamma_2(0) = x, (\varphi (\gamma_1(0)))' = (\varphi (\gamma_2 (0)))'.
+  \end{equation*}
+  We  denote the equivalence class at $x$ by 
+  \begin{equation*}
+    \gamma'(0)= \set{\widetilde{\gamma} : \widetilde{\gamma} \sim_x \gamma},
+  \end{equation*}
+  and  call it a \textbf{tangent vector} of $M$ at $x$. The \textbf{tangent space}  of  $M$ at $x$,  denoted by $T_xM$ is then defined as the set  of all tangent vectors  at $x$. To define vector-space operations on $T_xM$, we define the map
+  \begin{equation*}
+    d\varphi_x(\gamma'(0)) := (\varphi \circ \gamma)'(0) = \res{\cfrac{d}{dt}[(\varphi \circ \gamma)(t)]}{t=0},
+  \end{equation*}
+  for $ \gamma \in \gamma'(0)$.
+\end{defn}
+
+\begin{defn}
+  Let $f: M \to N$ be a differentiable map between differentiable manifolds $M$ and $N$. This map induces the following
+  \begin{equation*}
+    Df_{\mathbf{p}}: T_pM \to T_{f(p)}N
+  \end{equation*}
+  \begin{equation*}
+    (\gamma'(0)) \mapsto (f \circ \gamma)'(0), 
+  \end{equation*}
+  for $\gamma \in \gamma'(0)$. This map is variously called the \textbf{differential} or \textbf{pushforward} or \textbf{derivative} or \textbf{total derivative} of $f$. 
+\end{defn}
+\begin{defn}
+  Let $M$ and $N$ be differentiable manifolds and $f: M \to N$ a differentiable map between them. The map $f$ is a \textbf{submersion at a point p} $\in M$ if its differential
+  \begin{equation*}
+    Df_{\mathbf{p}}: T_pM \to T_{f(p)}N
+  \end{equation*}
+  is a surjective linear map. If  $f$ is a submersion at every $p \in M$ then we call $f$ a \textbf{submersion}.
+\end{defn}
+
+\section{Introduction}
+
+\begin{defn}
+  A \textbf{real lie group} is a group that is also a finite-dimensional real smooth manifold, in which the group operations of multiplication and inversion are smooth maps. Smoothness of the group multiplication
 \begin{center}
   $\mu : G \times G \to G$,  $\mu(x,y)=xy$
 \end{center}
@@ -166,6 +535,17 @@ What's more, these are actually isomorphic as lie groups, which we shall see lat
     $SO(n) = \set{A \in O(n) : det A = 1}$
   \end{itemize}
 \end{example}
+
+\begin{remark}
+  As sets these  groups  are described as level sets in $M_n(\real)$,
+  \begin{center}
+    $O(n) = \inv{F}(0)$, where $F : M_n(\real) \to M_n(\real), A \mapsto A^TA - I$
+  \end{center}
+  Also, as vector spaces $M_n(\real) \cong \real^{n^2}$.
+\end{remark}
+
+
+
 \end{document}
 
 \begin{example}
