@@ -1,0 +1,78 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref}
+
+\usetikzlibrary{positioning}
+
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\q}{\mathbb{Q}}
+\newcommand{\cx}{\mathbb{C}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\field}{\mathbb{F}}
+\newcommand{\ita}[1]{\textit{#1}}
+\newcommand{\com}[2]{#1\backslash#2}
+\newcommand{\oneton}{\{1,2,3,...,n\}}
+\newcommand{\abs}[1]{|#1|}
+\newcommand{\card}[1]{|#1|}
+\newcommand\idea[1]{\begin{gather*}#1\end{gather*}}
+\newcommand\ef{\ita{f} }
+\newcommand\eff{\ita{f}}
+\newcommand\proofs[1]{\begin{proof}#1\end{proof}}
+\newcommand\inv[1]{#1^{-1}}
+\newcommand\set[1]{\{#1\}}
+\newcommand\en{\ita{n }}
+\newcommand\nullity{\text{nullity}}
+\newcommand{\vbrack}[1]{\langle #1\realangle}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\res}[2]{#1\bigg\rvert_{#2}}
+\newcommand{\im}[0]{\text{im}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\spn}[0]{\text{span}}
+\newcommand{\colsp}{\text{Colsp}}
+\newcommand{\nullsp}{\text{Nullsp}}
+\newcommand{\rk}{\text{rank}}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{defn}{Definition}[thm]
+\newtheorem*{remark}{Remark}
+\newtheorem{prop}{Proposition}[thm]
+\newtheorem{example}{Example}[thm]
+\newtheorem{question}{Question}
+\newtheorem{lemma}{Lemma}[thm]
+\newtheorem{exercise}{Exercise}[thm]
+
+\hypersetup{
+  colorlinks,
+  linkcolor=blue
+}
+\setcounter{tocdepth}{3}% Show ToC content up to level 3 (\subsubsection)
+
+           
+\begin{document}
+\begin{question}[3 points]
+  In class we described the Least Squares algorithm as a learning algorithm that minimizes empirical risk.  See PDF summary, and adopt the same notation. In at most 3 sentences answer the following question, backing up each claim you make by either naming a theorem from Linear Algebra  or  referring  to  facts  from  the  PDF  summary:  Suppose $m < d < \infty$ then  what  can  you conclude about the rank of the $d \times d$ matrix $A$ and why does this imply that there are infinitely many $w$ that minimize empirical risk? \\
+  \textbf{\underline{Note}: if you submit more than three sentences, the grader will only read your \textbf{first three sentences}}
+\end{question}
+\begin{proof}
+
+  Let $v \in \nullsp(A)$ be non non-zero, 
+  \footnote{Let $B, C$ be $m \times n$ and $n \times k$ dimensional matrices, respectively. Let $w_1, \dots, w_{d_1}$ be a basis for the column space of $B$ and $v_1, \dots, v_{d_2}$ be a basis for the column space of $C$. Then for any $v \in \real^k$ we have for some $\alpha_i, \beta_j \in \real,$
+  \begin{align*}
+    BCv = B(Cv) =  B(\sum\limits_{i=1}^{d_2}\alpha_iv_i) = \sum\limits_{i=1}^{d_2}\alpha_iBv_i = \sum\limits_{i=1}^{d_1}\beta_iw_i.
+  \end{align*}
+  Hence, since a basis is a minimal spanning set, and both $\set{w_i}_{i=1}^{d_1}$ and $\set{Bv_i}_{i=1}^{d_2}$  span the column space of $BC$, we get $\rk(BC) \leq \min(\set{\rk(B), \rk(C)})$. Since $\rk(\X^T) = \rk(\X)$ (will take for granted that the column rank is the same as the row rank), we conclude $\rk(A) = \rk(\X^T\X) \leq \rk(\X) \leq m < d$. By the rank-nullity theorem, we get that $\nullity(A)>0$. Hence there exists some non trivial element $ v \in \nullsp(A)$.
+  }
+  $w$ be a non-trivial solution to $Aw=b$,
+  \footnote{
+  The risk of $f_w$ is measured by $R(f_w) = \norm{\Y - \X w}$. Taking derivatives one finds that this is minimized when $Aw=b$, for $A=\X^T X$ and $b=\X^T \Y$. By assumption $b \not = 0$. We now show that a solution exists.\\
+  Let $v \in \nullsp(A)$, then for any $u \in \real^d$ we get $v \cdot Au = v^T A u = Av \cdot u = 0$, so $\nullsp(A) \subseteq \colsp(A)^{\perp}$. Conversely for $v \in \colsp(A)^{\perp}$, let $e_i =(0, \dots, 1, \dots, 0) \in \real^d$ be the $i$th standard basis vector, then $0 = v \cdot Ae_i = Av \cdot e_i$. Thus, $Av = 0$, and $v \in \nullsp(A)$. Since $b=\X^T\Y$, for $v \in \nullsp(A)$ we have $b \cdot v = (\X^T \Y) \cdot v = \Y^T (\X v) = 0$. Hence $b \in \nullsp(A)^{\perp} = \colsp(A)^{\perp}^{\perp} = \colsp(A)$, and there exists some non-zero $w \in \real^d$ such that $Aw = b$. This last claim requires additional propositions, namely that for any subspace $W \subseteq V, V \cong W \oplus W^{\perp}$; if $V_1$, $V_2$ are vector spaces then $\dim(V_1 \oplus V_2)= \dim(V_1) + \dim(V_2)$; and if $W \subseteq V$ and $\dim(W) = \dim(V)$ then $W=V$. I will take these as a fact. Given these, one easily shows that $W \subseteq W^{\perp}^{\perp}$, and equality follows by noting $V \cong W \oplus W^{\perp} \cong W^{\perp} \oplus W^{\perp}^{\perp}$, so that $\dim(W) = \dim(W^{\perp}^{\perp})$.
+  }
+  and $\alpha \in \real$, then we get infinitely many solutions $w_{\alpha} = w + \alpha v$.
+  \footnote{
+  $Aw_{\alpha} = A(w + \alpha v) = Aw + \alpha Av = b$
+  }
+  
+\end{proof}
+\end{document}
