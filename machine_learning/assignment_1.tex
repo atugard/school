@@ -53,26 +53,81 @@
 \begin{document}
 \begin{question}[3 points]
   In class we described the Least Squares algorithm as a learning algorithm that minimizes empirical risk.  See PDF summary, and adopt the same notation. In at most 3 sentences answer the following question, backing up each claim you make by either naming a theorem from Linear Algebra  or  referring  to  facts  from  the  PDF  summary:  Suppose $m < d < \infty$ then  what  can  you conclude about the rank of the $d \times d$ matrix $A$ and why does this imply that there are infinitely many $w$ that minimize empirical risk? \\
-  \textbf{\underline{Note}: if you submit more than three sentences, the grader will only read your \textbf{first three sentences}}
 \end{question}
 \begin{proof}
 
-  Let $v \in \nullsp(A)$ be non non-zero, 
-  \footnote{Let $B, C$ be $m \times n$ and $n \times k$ dimensional matrices, respectively. Let $w_1, \dots, w_{d_1}$ be a basis for the column space of $B$ and $v_1, \dots, v_{d_2}$ be a basis for the column space of $C$. Then for any $v \in \real^k$ we have for some $\alpha_i, \beta_j \in \real,$
+  We conclude that $\rk(A) < d$.
+  \footnote{Let $B, C$ be $m \times n$ and $n \times k$ dimensional matrices, respectively. Let $w_1, \dots, w_{d_1}$ be a basis for the column space of $B$ and $v_1, \dots, v_{d_2}$ be a basis for the column space of $C$. Then for any $v \in \real^k$ there exist $\alpha_i, \beta_j \in \real$ such that
   \begin{align*}
-    BCv = B(Cv) =  B(\sum\limits_{i=1}^{d_2}\alpha_iv_i) = \sum\limits_{i=1}^{d_2}\alpha_iBv_i = \sum\limits_{i=1}^{d_1}\beta_iw_i.
+   \sum\limits_{i=1}^{d_1}\beta_iw_i = BCv = B(Cv) =  B(\sum\limits_{i=1}^{d_2}\alpha_iv_i) = \sum\limits_{i=1}^{d_2}\alpha_iBv_i 
   \end{align*}
-  Hence, since a basis is a minimal spanning set, and both $\set{w_i}_{i=1}^{d_1}$ and $\set{Bv_i}_{i=1}^{d_2}$  span the column space of $BC$, we get $\rk(BC) \leq \min(\set{\rk(B), \rk(C)})$. Since $\rk(\X^T) = \rk(\X)$ (will take for granted that the column rank is the same as the row rank), we conclude $\rk(A) = \rk(\X^T\X) \leq \rk(\X) \leq m < d$. By the rank-nullity theorem, we get that $\nullity(A)>0$. Hence there exists some non trivial element $ v \in \nullsp(A)$.
+  Hence, since a basis is a minimal spanning set, and both $\set{w_i}_{i=1}^{d_1}$ and $\set{Bv_i}_{i=1}^{d_2}$  span the column space of $BC$, we get $\rk(BC) \leq \min(\set{\rk(B), \rk(C)})$. Since $\rk(\X^T) = \rk(\X)$ (I will take for granted that the column rank is the same as the row rank), we conclude $\rk(A) = \rk(\X^T\X) \leq \rk(\X) \leq m < d$.
   }
-  $w$ be a non-trivial solution to $Aw=b$,
+  Let $v \in \nullsp(A)$ be non-zero
   \footnote{
-  The risk of $f_w$ is measured by $R(f_w) = \norm{\Y - \X w}$. Taking derivatives one finds that this is minimized when $Aw=b$, for $A=\X^T X$ and $b=\X^T \Y$. By assumption $b \not = 0$. We now show that a solution exists.\\
-  Let $v \in \nullsp(A)$, then for any $u \in \real^d$ we get $v \cdot Au = v^T A u = Av \cdot u = 0$, so $\nullsp(A) \subseteq \colsp(A)^{\perp}$. Conversely for $v \in \colsp(A)^{\perp}$, let $e_i =(0, \dots, 1, \dots, 0) \in \real^d$ be the $i$th standard basis vector, then $0 = v \cdot Ae_i = Av \cdot e_i$. Thus, $Av = 0$, and $v \in \nullsp(A)$. Since $b=\X^T\Y$, for $v \in \nullsp(A)$ we have $b \cdot v = (\X^T \Y) \cdot v = \Y^T (\X v) = 0$. Hence $b \in \nullsp(A)^{\perp} = \colsp(A)^{\perp}^{\perp} = \colsp(A)$, and there exists some non-zero $w \in \real^d$ such that $Aw = b$. This last claim requires additional propositions, namely that for any subspace $W \subseteq V, V \cong W \oplus W^{\perp}$; if $V_1$, $V_2$ are vector spaces then $\dim(V_1 \oplus V_2)= \dim(V_1) + \dim(V_2)$; and if $W \subseteq V$ and $\dim(W) = \dim(V)$ then $W=V$. I will take these as a fact. Given these, one easily shows that $W \subseteq W^{\perp}^{\perp}$, and equality follows by noting $V \cong W \oplus W^{\perp} \cong W^{\perp} \oplus W^{\perp}^{\perp}$, so that $\dim(W) = \dim(W^{\perp}^{\perp})$.
+  By the rank-nullity theorem, we get that $\nullity(A)>0$. Hence there exists some non trivial element $ v \in \nullsp(A)$.
   }
-  and $\alpha \in \real$, then we get infinitely many solutions $w_{\alpha} = w + \alpha v$.
+  and $w$ a solution to $Aw=b$,
   \footnote{
-  $Aw_{\alpha} = A(w + \alpha v) = Aw + \alpha Av = b$
+  The empirical risk of $f_w$ is measured by $R(f_w) = \norm{\Y - \X w}^2$. Taking derivatives one finds that this is minimized when $Aw=b$, for $A=\X^T X$ and $b=\X^T \Y$. \\
+  \begin{indent}
+    We now show that a solution exists. Let $v \in \nullsp(A)$, then for any $u \in \real^d$ we get $v \cdot Au = v^T A u = Av \cdot u = 0$, so $\nullsp(A) \subseteq \colsp(A)^{\perp}$. Conversely for $v \in \colsp(A)^{\perp}$, let $e_i =(0, \dots, 1, \dots, 0)^T \in \real^d$ be the $i$th standard basis vector, then $0 = v \cdot Ae_i = Av \cdot e_i$. Thus, $Av = 0$, and $v \in \nullsp(A)$. Since $b=\X^T\Y$, for $v \in \nullsp(A)$ we have $b \cdot v = (\X^T \Y) \cdot v = \Y^T (\X v) = 0$. Hence $b \in \nullsp(A)^{\perp} = \underbrace{\colsp(A)^{\perp}^{\perp} = \colsp(A)}_{(*)}$, and there exists some non-zero $w \in \real^d$ such that $Aw = b$.
+  \end{indent}
+  \\
+  \begin{indent}
+    $(*)$ requires proof, which relies on additional propositions, namely that for any subspace $W \subseteq V, V \cong W \oplus W^{\perp}$; if $V_1$, $V_2$ are vector spaces then $\dim(V_1 \oplus V_2)= \dim(V_1) + \dim(V_2)$; and if $W \subseteq V$ and $\dim(W) = \dim(V)$ then $W=V$. Assuming these, one easily shows that $W \subseteq W^{\perp}^{\perp}$, and equality follows by noting $V \cong W \oplus W^{\perp}$ and $V \cong W^{\perp} \oplus W^{\perp}^{\perp}$, so that $\dim(W) = \dim(W^{\perp}^{\perp})$.
+  \end{indent}
   }
-  
+  then we get infinitely many solutions $w_{\alpha} = w + \alpha v$, for $\alpha \in \real$.
+  \footnote{
+  $Aw_{\alpha} = A(w + \alpha v) = Aw + \alpha Av = b$.
+  }
+\end{proof}
+\newpage
+\begin{question}[4 points]
+  In order to analyze runtime one needs first to assume a model of computation.  You should assume for this question that every addition or multiplication of two real numbers takes one unit of time and all other computational (and book-keeping) activities are essentially instantaneous (time  zero). By  counting  additions and multiplications, you  will therefore obtain an amount of time that the algorithm takes under the assumed model of computation. In particular, you should express this time asymptotically as $O(f)$ for some function $f$ of $n$ and $d$ given training data as in the previous question and supposing a new data point $(x_{n+1}, y_{n+1})$ arrives.  Assume that inversion of a $d \times d$ matrix takes time $O(d^3)$
+  \begin{enumerate}
+  \item (3.5 points) With all the above assumptions, show that Recursive Least Squares will take time $O(d^3)$ to find the optimal $w_{∗} = w_{n+1}$ knowing the previous $w_{∗}=w_n$ and matrices from that previous computation (Hint:  see that the time taken for updating the gain matrix dominates this computation). On the other hand, show that performing Ordinary Least Squares on the full data set $(x_i, y_i)$, $ i= 1, . . . n+ 1$ would take time $O((n+ 1)(d+d^2) +d^3) =O(nd^2+d^3)$.
+  \item
+    (0.5 point) What situations does this suggest should be handled by Recursive Least Squares instead of Ordinary Least Squares?  Justify your answer.
+  \end{enumerate}
+\end{question}
+\begin{proof}
+  We'll find the time complexity of each subexpression, first assuming $w_n$ is cached, then not, and add them together:
+  \begin{align*}
+    w_{n+1} = w_{n} +Ke_1,
+  \end{align*}
+  \begin{itemize}
+  \item
+    Computing $w_n$: Zero run time.
+  \item
+    Computing $K$: We are given, in handout ols-rls-2021, the following recipe for computing $K$: 
+  \begin{enumerate}
+  \item
+    compute $\inv{P}_{n+1} = \inv{P}_n + C_1^TC_1$ ,
+  \item
+    invert this $d \times d$ matrix to get $P_{n+1}$,
+  \item
+    compute $P_{n+1}C_1^T$.
+  \end{enumerate}
+  We find the time complexity of each step:
+  \begin{enumerate}
+  \item
+    Computing  $P_n$ costs us nothing. Inverting it, since it's a $d \times d$ matrix, costs us $d^3$. By assumption $C_1 = x_{n+1}$, so $C_1^T C_1 = x_{n+1} \cdot x_{n+1}$ takes at most $2d$ to evaluate ($d$ for multiplying the components, $d$ for summing over them). Finally, it takes $1$ unit of time to add $P_n$ to $C_1^T C_1$. Thus, computing $P_{n+1}^{-1}$ takes no more than $d^3$ + $2d$ + $1$. As $d^3 + 2d + 1 \leq 4d^3$ for all numbers $d>0$, we conclude that computing $\inv{P}_{n+1}$ is $O(d^3)$.
+  \item
+    Inverting $P_{n+1}^{-1}$ costs us $d^3$, so this step is $O(d^3)$.
+  \item
+    Writing $P_{n+1}C_1^T = (r_i \cdot x_{n+1})^T$, for $r_i$ the $i$th row of $P_{n+1}$, we see that it takes at most $d(2d) = 2d^2 \leq 2d^3$, so that's $O(d^3)$. 
+  \end{enumerate}
+  Thus, computing $K$ is $O(d^3) + O(d^3) + O(d^3) = O(3d^3) = O(d^3)$.
+\item Computing $e_1$:
+  We have $e_1 = b_1 - C_1 w_n$. Since $C_1 = x_{n+1}$ is just a vector of length $d$, we have $C_1 w_n = x_{n+1} \cdot w_n$ costs $2d$. Retrieving $b_1$ costs nothing, and taking the difference costs $1$. Thus this step costs
+  $2d + 1$, which is $O(d^3)$.
+\item
+  Add $w_n$ and $Ke_1$: This is $O(1)=O(d^3)$.
+  \end{itemize}
+  The time complexity of calculating $w_{n+1}$ when you're caching values is therefore $O(d^3) + O(d^3) + O(d^3) = O(3d^3) = O(d^3).
+\end{itemize}
+
 \end{proof}
 \end{document}
