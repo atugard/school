@@ -68,20 +68,17 @@
   \footnote{
   By the rank-nullity theorem, we get that $\nullity(A)>0$. Hence there exists some non trivial element $ v \in \nullsp(A)$.
   }
-  and $w$ a solution to $Aw=b$,
+  and $w$ a solution of $Aw=b$,
   \footnote{
   The empirical risk of $f_w$ is measured by $R(f_w) = \norm{\Y - \X w}^2$. Taking derivatives one finds that this is minimized when $Aw=b$, for $A=\X^T X$ and $b=\X^T \Y$. \\
   \begin{indent}
-    We now show that a solution exists. Let $v \in \nullsp(A)$, then for any $u \in \real^d$ we get $v \cdot Au = v^T A u = Av \cdot u = 0$, so $\nullsp(A) \subseteq \colsp(A)^{\perp}$. Conversely for $v \in \colsp(A)^{\perp}$, let $e_i =(0, \dots, 1, \dots, 0)^T \in \real^d$ be the $i$th standard basis vector, then $0 = v \cdot Ae_i = Av \cdot e_i$. Thus, $Av = 0$, and $v \in \nullsp(A)$. Since $b=\X^T\Y$, for $v \in \nullsp(A)$ we have $b \cdot v = (\X^T \Y) \cdot v = \Y^T (\X v) = 0$. Hence $b \in \nullsp(A)^{\perp} = \underbrace{\colsp(A)^{{\perp}^{\perp}} = \colsp(A)}_{(*)}$, and there exists some non-zero $w \in \real^d$ such that $Aw = b$.
-  \end{indent}
-  \\
-  \begin{indent}
-    $(*)$ requires proof, which relies on additional propositions, namely that for any subspace $W \subseteq V, V \cong W \oplus W^{\perp}$; if $V_1$, $V_2$ are vector spaces then $\dim(V_1 \oplus V_2)= \dim(V_1) + \dim(V_2)$; and if $W \subseteq V$ and $\dim(W) = \dim(V)$ then $W=V$. Assuming these, one easily shows that $W \subseteq W^{{\perp}^{\perp}}$, and equality follows by noting $V \cong W \oplus W^{\perp}$ and $V \cong W^{\perp} \oplus W^{{\perp}^{\perp}}$, so that $\dim(W) = \dim(W^{{\perp}^{\perp}})$.
+    We now show that a solution exists. Let $v \in \nullsp(A)$, then for any $u \in \real^d$ we get $v \cdot Au = v^T A u = Av \cdot u = 0$, so $\nullsp(A) \subseteq \colsp(A)^{\perp}$. Conversely for $v \in \colsp(A)^{\perp}$, let $e_i =(0, \dots, 1, \dots, 0)^T \in \real^d$ be the $i$th standard basis vector, then $0 = v \cdot Ae_i = Av \cdot e_i$. Thus, $Av = 0$, and $v \in \nullsp(A)$. Since $b=\X^T\Y$, for $v \in \nullsp(A)$ we have $b \cdot v = (\X^T \Y) \cdot v = \Y^T (\X v) = 0$. Hence $b \in \nullsp(A)^{\perp} = \colsp(A)^{\perp^\perp} = \colsp(A)$, and there exists some non-zero $w \in \real^d$ such that $Aw = b$.
   \end{indent}
   }
   then we get infinitely many solutions $w_{\alpha} = w + \alpha v$, for $\alpha \in \real$.
   \footnote{
-  $Aw_{\alpha} = A(w + \alpha v) = Aw + \alpha Av = b$.
+  $Aw_{\alpha} = A(w + \alpha v) = Aw + \alpha Av = b$. More generally if $v_1, \dots, v_k$ is a basis for the nullspace of $A$, then for any $\alpha_1, \dots, \alpha_k$ we have
+  $A(w+\sum\limits_{i=1}^k \alpha_iv_i) = Aw + \sum\limits_{i=1}^k \alpha_i Av_i = Aw$.
   }
 \end{proof}
 \newpage
@@ -177,5 +174,83 @@ Taking limits we find that the right hand side converges to $\cfrac{d+1}{d}$. Fi
 
 (PART 2) Any time that the program has to interact with the outside world over long periods of time recursive least squares should be used (or some algorithm that memoizes/caches). We didn't look at how long it'd take to run recursive least squares on a data set without memoization. It'd probably be way longer than ordinary least squares. Hence, if the program doesn't have to interact with the outside world a lot, i.e. if you're going to only run the computation a few times, you'd better use ordinary least squares. If your program has to interact with the outside world a lot, like if new data is always coming in and you're re-computing the same things over and over to make use of that new data, then use recursive least squares.
 
+\end{proof}
+\begin{question}
+  Read Chapter 3 of Tom Mitchell's book Machine Learning to introduce yourself to the Naive Bayes algorithm for producing a classifier. In particular pages 8-10 derive the form of $P(Y|X)$ used by Naive Bayes under simple Gaussian assumptions - so-called Gaussian Naive Bayes (GNB) - and show it is exactly the same $P(Y|X)$ used by logistic regression. Now consider instead slightly more general assumptions where the Gaussians have standard deviation that may depend on the class (value of $Y$). Derive the form of $P(Y|X)$ under this new more general version of GNB and say whether it still corresponds to logistic regresssion. Finally consider a less naive algorithm where conditional independence of the random variables in $X = (X_1, ..., X_n)$ is not assumed - specifically suppose $P(X|Y=k)$ is multivariate normal with mean depending on k, but covariance matrix now NOT depending on k. Derive $P(Y|X)$ and say if it has the same form as in logistic regression.
+\end{question}
+\begin{proof}
+  Our assumptions are:
+  \begin{itemize}
+  \item
+    $Y$ is boolean, governed by a Bernoulli distribution, with parameter $\pi = P(Y = 1)$.
+  \item
+    $X = (X_1, \dots, X_n)$, where each $X_i$ is a continuous random variable.
+  \item
+    For each $X_i, P(X_i | Y=y_k)$ is a Gaussian distribution of the form $N(\mu_{ik}, \sigma_{ik})$.
+  \item
+    For all $i$ and $j \neq i$, $X_i$ and $X_j$ are conditionally independent from $Y$.
+  \end{itemize}
+  Assuming these, let's begin our derivation:
+  \begin{align}
+    P(Y=1|X)
+    &= \cfrac{P(Y=1)P(X|Y=1)}{P(Y=1)P(X|Y=1) + P(Y=0)P(X|Y=0)} \\
+    &= \cfrac{1}{1 + \cfrac{P(Y=0)P(X|Y=0)}{P(Y=1)P(X|Y=1)}} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{P(Y=0)P(X|Y=0)}{P(Y=1)P(X|Y=1)})} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{P(Y=0)\prod\limits_{i=1}^nP(X_i|Y=0)}{P(Y=1)\prod\limits_{i=1}^nP(X_i|Y=1)})} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{P(Y=0)}{P(Y=1)} + \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)})} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)})}.
+  \end{align}
+  We have
+  \begin{align*}
+    \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)}
+    &= \sum\limits_{i=1}^n\ln
+    \cfrac{\frac{1}{\sqrt{2\pi\sigma_{i0}^2}}\exp(\frac{-(X_i-\mu_{i0})^2}{2\sigma_{i0}^2})}{\frac{1}{\sqrt{2\pi\sigma_{i1}^2}}\exp(\frac{-(X_i-\mu_{i1})^2}{2\sigma_{i1}^2})} \\
+    &= \sum\limits_i \ln(\frac{\sigma_{i1}}{\sigma_{i0}}\exp(\frac{-(X_i-\mu_{i0})^2}{2\sigma_{i0}^2} + \frac{(X_i-\mu_{i1})^2}{2\sigma_{i1}^2})) \\
+    &=\sum\limits_i \ln(\frac{\sigma_{i1}}{\sigma_{i0}}) +
+    \frac{\sigma_{i0}^2-\sigma_{i1}^2}{2\sigma_{i0}^2\sigma_{i1}^2}X_i^2 + \cfrac{\mu_{i0}\sigma_{i1}^2-\mu_{i1}\sigma_{i0}^2}{\sigma_{i0}^2\sigma_{i1}^2}X_i +
+    \cfrac{\sigma_{i0}^2\mu_{i1}^2 - \sigma_{i1}^2\mu_{i0}^2}{2\sigma_{i0}^2\sigma_{i1}^2}) \\
+    &=\sum\limits_i \ln(\frac{\sigma_{i1}}{\sigma_{i0}}) +
+    (\cfrac{1}{2\sigma_{i1}^2}-\cfrac{1}{2\sigma_{i0}^2})X_i^2+ (\cfrac{\mu_{i0}}{\sigma_{i0}^2}-\cfrac{\mu_{i1}}{\sigma_{i1}^2})X_i +
+    (\cfrac{\mu_{i1}^2}{2\sigma_{i1}^2} - \cfrac{\mu_{i0}^2}{2\sigma_{i0}^}) \\
+    &=\sum\limits_i (\cfrac{1}{2\sigma_{i1}^2}-\cfrac{1}{2\sigma_{i0}^2})X_i^2+ (\cfrac{\mu_{i0}}{\sigma_{i0}^2}-\cfrac{\mu_{i1}}{\sigma_{i1}^2})X_i +
+    (\cfrac{\mu_{i1}^2}{2\sigma_{i1}^2} - \cfrac{\mu_{i0}^2}{2\sigma_{i0}^} + \ln(\frac{\sigma_{i1}}{\sigma_{i0}}))\\
+    &= \sum\limits_i \alpha_{i2} X_i^2 + \alpha_{i1} X_i + \widetilde{\alpha_{i0}},
+  \end{align*}
+  for
+  \begin{align*}
+    \widetilde{\alpha_{i0}} &= \cfrac{\mu_{i1}^2}{2\sigma_{i1}^2} - \cfrac{\mu_{i0}^2}{2\sigma_{i0}^} + \ln(\frac{\sigma_{i1}}{\sigma_{i0}}), \\
+    \alpha_{i1} &= \cfrac{\mu_{i0}}{\sigma_{i0}^2}-\cfrac{\mu_{i1}}{\sigma_{i1}^2}, \\
+    \alpha_{i2} &= \cfrac{1}{2\sigma_{i1}^2}-\cfrac{1}{2\sigma_{i0}^2}.
+  \end{align*}
+  Let 
+  \begin{align*}
+    \alpha_{00} = \ln\cfrac{1-\pi}{\pi} + \sum\limits_i^n\widetilde{\alpha_{i0}}.
+  \end{align*}
+  Then, substituting in our polynomial expression for $X_i$, and continuing from equation (8):
+  \begin{align*}
+    P(Y=1|X) = \cfrac{1}{1+\exp(\alpha_{00} + \sum\limits_{i=1}^n \alpha_{i2}X_i^2 + \alpha_{i1}X_i)},
+  \end{align*}
+  and from this we get:
+  \begin{align*}
+    P(Y=0|X) &= 1 - P(Y=1|X) \\
+    &= \cfrac{\exp(\alpha_{00} + \sum\limits_{i=1}^n \alpha_{i2}X_i^2 + \alpha_{i1}X_i)}{1+\exp(\alpha_{00} + \sum\limits_{i=1}^n \alpha_{i2}X_i^2 + \alpha_{i1}X_i)}.
+  \end{align*}
+  This more general GNB does not correspond to logistic regression, since if $\sigma_{i0} \neq \sigma_{i1}$, for any $0 \leq i \leq n$, then $\alpha_{i2} \neq 0$ and there is a degree two term in the denominator of the parametrization of $P(Y=1|X)$. If $\forall i, \sigma_{i0} = \sigma_{i1}$, then $\forall i, \alpha_{2i}=0$, and we are back to the case where the conditional variance is independent of $Y$, i.e. back to the case where $GNB$ corresponds to logistic regression.
+  \bigbreak
+  Next, we derive $P(Y|X)$ under the following assumptions:
+  \begin{itemize}
+  \item
+    $Y$ is boolean, governed by a Bernoulli distribution, with parameter $\pi = P(Y = 1)$.
+  \item
+    $X = (X_1, \dots, X_n)$, where each $X_i$ is a continuous random variable.
+  \item
+    $P(X | Y=k) \sim \mathcal{N}(\mu_{k}, \Sigma)$ is multivariate normal with mean depending on $k$, and variance independent from $k$, where
+    \begin{align*}
+      \mu_k
+      &= E[X] = (E[X_1], \dots, E[X_n])^T = (\mu_{1k}, \dots, \mu_{nk})^T \\
+      \Sigma
+      &= (\text{Cov}[X_i, X_j])_{ij}
+    \end{align*}
+  \end{itemize}  
 \end{proof}
 \end{document}
