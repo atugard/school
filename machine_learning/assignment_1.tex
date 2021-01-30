@@ -8,6 +8,7 @@
 \newcommand{\n}{\mathbb{N}}
 \newcommand{\z}{\mathbb{Z}}
 \newcommand{\q}{\mathbb{Q}}
+\newcommand{\E}{\mathbb{E}}
 \newcommand{\cx}{\mathbb{C}}
 \newcommand{\real}{\mathbb{R}}
 \newcommand{\field}{\mathbb{F}}
@@ -191,7 +192,7 @@ Taking limits we find that the right hand side converges to $\cfrac{d+1}{d}$. Fi
     For all $i$ and $j \neq i$, $X_i$ and $X_j$ are conditionally independent from $Y$.
   \end{itemize}
   Assuming these, let's begin our derivation:
-  \begin{align}
+  \begin{align*}
     P(Y=1|X)
     &= \cfrac{P(Y=1)P(X|Y=1)}{P(Y=1)P(X|Y=1) + P(Y=0)P(X|Y=0)} \\
     &= \cfrac{1}{1 + \cfrac{P(Y=0)P(X|Y=0)}{P(Y=1)P(X|Y=1)}} \\
@@ -199,7 +200,7 @@ Taking limits we find that the right hand side converges to $\cfrac{d+1}{d}$. Fi
     &= \cfrac{1}{1+\exp(\ln\cfrac{P(Y=0)\prod\limits_{i=1}^nP(X_i|Y=0)}{P(Y=1)\prod\limits_{i=1}^nP(X_i|Y=1)})} \\
     &= \cfrac{1}{1+\exp(\ln\cfrac{P(Y=0)}{P(Y=1)} + \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)})} \\
     &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)})}.
-  \end{align}
+  \end{align*}
   We have
   \begin{align*}
     \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)}
@@ -224,18 +225,21 @@ Taking limits we find that the right hand side converges to $\cfrac{d+1}{d}$. Fi
   \end{align*}
   Let 
   \begin{align*}
-    \alpha_{00} = \ln\cfrac{1-\pi}{\pi} + \sum\limits_i^n\widetilde{\alpha_{i0}}.
+    \alpha_{00} = \ln\cfrac{1-\pi}{\pi} + \sum\limits_{i=1}^n\widetilde{\alpha_{i0}}.
   \end{align*}
-  Then, substituting in our polynomial expression for $X_i$, and continuing from equation (8):
+  Then,
   \begin{align*}
-    P(Y=1|X) = \cfrac{1}{1+\exp(\alpha_{00} + \sum\limits_{i=1}^n \alpha_{i2}X_i^2 + \alpha_{i1}X_i)},
+    P(Y=1|X)
+    &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \sum\limits_{i=1}^n\ln\cfrac{P(X_i|Y=0)}{P(X_i|Y=1)})} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \sum\limits_{i=1}^n \widetilde{\alpha_{i0}} + \sum\limits_{i=1}^n (\alpha_{i2}X_i^2 + \alpha_{i1}X_i))} \\
+    &= \cfrac{1}{1+\exp(\alpha_{00} + \sum\limits_{i=1}^n (\alpha_{i2}X_i^2 + \alpha_{i1}X_i))},
   \end{align*}
   and from this we get:
   \begin{align*}
     P(Y=0|X) &= 1 - P(Y=1|X) \\
     &= \cfrac{\exp(\alpha_{00} + \sum\limits_{i=1}^n \alpha_{i2}X_i^2 + \alpha_{i1}X_i)}{1+\exp(\alpha_{00} + \sum\limits_{i=1}^n \alpha_{i2}X_i^2 + \alpha_{i1}X_i)}.
   \end{align*}
-  This more general GNB does not correspond to logistic regression, since if $\sigma_{i0} \neq \sigma_{i1}$, for any $0 \leq i \leq n$, then $\alpha_{i2} \neq 0$ and there is a degree two term in the denominator of the parametrization of $P(Y=1|X)$. If $\forall i, \sigma_{i0} = \sigma_{i1}$, then $\forall i, \alpha_{2i}=0$, and we are back to the case where the conditional variance is independent of $Y$, i.e. back to the case where $GNB$ corresponds to logistic regression.
+  This is not a logistic regression parametrization of $P(Y|X)$.
   \bigbreak
   Next, we derive $P(Y|X)$ under the following assumptions:
   \begin{itemize}
@@ -247,10 +251,53 @@ Taking limits we find that the right hand side converges to $\cfrac{d+1}{d}$. Fi
     $P(X | Y=k) \sim \mathcal{N}(\mu_{k}, \Sigma)$ is multivariate normal with mean depending on $k$, and variance independent from $k$, where
     \begin{align*}
       \mu_k
-      &= E[X] = (E[X_1], \dots, E[X_n])^T = (\mu_{1k}, \dots, \mu_{nk})^T \\
+      &= \E[X] = (\E[X_1], \dots, \E[X_n])^T = (\mu_{1k}, \dots, \mu_{nk})^T \\
       \Sigma
       &= (\text{Cov}[X_i, X_j])_{ij}
     \end{align*}
-  \end{itemize}  
+  \end{itemize}
+  We have:
+  \begin{align*}
+    P(Y=1|X)
+    &= \cfrac{1}{1+\exp(\ln\cfrac{P(Y=0)P(X|Y=0)}{P(Y=1)P(X|Y=1)})} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \ln\cfrac{P(X|Y=0)}{P(X|Y=1)})} 
+  \end{align*}
+  and
+  \begin{align*}
+    \cfrac{P(X|Y=0)}{P(X|Y=1)})
+    &= \ln\cfrac{\cfrac{\exp(-\frac{1}{2}(X-\mu_0)^T\Sigma^{-1}(X-\mu_0))}{\sqrt{(2\pi)^n\det(\Sigma)}}}{\cfrac{\exp(-\frac{1}{2}(X-\mu_1)^T\Sigma^{-1}(X-\mu_1))}{\sqrt{(2\pi)^n\det(\Sigma)}}} \\
+    &= \ln\cfrac{\exp(-\frac{1}{2}(X-\mu_0)^T\Sigma^{-1}(X-\mu_0))}{\exp(-\frac{1}{2}(X-\mu_1)^T\Sigma^{-1}(X-\mu_1))} \\
+    &= \ln\exp(-\frac{1}{2}(X-\mu_0)^T\Sigma^{-1}(X-\mu_0) + \frac{1}{2}(X-\mu_1)^T\Sigma^{-1}(X-\mu_1)) \\
+    &= -\frac{1}{2}(X^T-\mu_0^T)\Sigma^{-1}(X-\mu_0) + \frac{1}{2}(X^T-\mu_1^T)\Sigma^{-1}(X-\mu_1)\\
+    &= -\frac{1}{2}(X^T\Sigma^{-1}X -X^T\inv{\Sigma}\mu_{0} - \mu_{0}^T\inv{\Sigma}X + \mu_{0}\inv{\Sigma}\mu_{0}) \\
+    &+ \frac{1}{2}(X^T\Sigma^{-1}X -X^T\inv{\Sigma}\mu_{1} - \mu_{1}^T\inv{\Sigma}X + \mu_{1}\inv{\Sigma}\mu_{1}) \\
+    &= \frac{1}{2}(X^T\inv{\Sigma}(\mu_{0} -\mu_{1}) + (\mu_{0}^T - \mu_{1}^T)\inv{\Sigma}X + \mu_{1}\inv{\Sigma}\mu_{1} - \mu_{0}\inv{\Sigma}\mu_{0}) \\
+    &= \cfrac{1}{2}( \Sigma^{-1}(\mu_0 - \mu_1) \cdot X + (\Sigma^{-1})^T(\mu_0 - \mu_1) \cdot X + \mu_{1}\inv{\Sigma}\mu_{1} - \mu_{0}\inv{\Sigma}\mu_{0})\\
+    &= \cfrac{1}{2}(\Sigma^{-1} + (\Sigma^{-1})^T)(\mu_0 - \mu_1)\cdot X +\cfrac{1}{2}(\mu_{1}\inv{\Sigma}\mu_{1} - \mu_{0}\inv{\Sigma}\mu_{0}) \\
+    &= \cfrac{1}{2}\sum\limits_{i=1}^n((\Sigma^{-1} + (\Sigma^{-1})^T)(\mu_0 - \mu_1))_i\cdot X_i + \cfrac{1}{2}(\mu_{1}\inv{\Sigma}\mu_{1} - \mu_{0}\inv{\Sigma}\mu_{0}) \\
+    &= \widetilde{w_0} + \sum\limits_{i=1}^n w_i\cdot X_i
+  \end{align*}
+  for
+  \begin{align*}
+    w_i &= ((\Sigma^{-1} + (\Sigma^{-1})^T)(\mu_0 - \mu_1))_i, \\
+   \widetilde{w_0} &= \cfrac{1}{2}(\mu_{1}\inv{\Sigma}\mu_{1} - \mu_{0}\inv{\Sigma}\mu_{0}).
+  \end{align*}
+  Let
+  \begin{align*}
+    w_0 = \ln\cfrac{1-\pi}{\pi} + \widetilde{w_0}
+  \end{align*}
+  Then we have:
+  \begin{align*}
+    P(Y=1|X)
+    &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \ln\cfrac{P(X|Y=0)}{P(X|Y=1)})} \\
+    &= \cfrac{1}{1+\exp(\ln\cfrac{1-\pi}{\pi} + \widetilde{w_0} + \sum\limits_{i=1}^nw_iX_i)} \\
+    &= \cfrac{1}{1+\exp(w_0 + \sum\limits_{i=1}^nw_iX_i)},
+  \end{align*}
+  and
+  \begin{align*}
+    P(Y=0|X) &= 1 - P(Y=1|X) \\
+    &= \cfrac{\exp(w_0 + \sum\limits_{i=1}^nw_iX_i)}{1+\exp(w_0 + \sum\limits_{i=1}^nw_iX_i)},
+  \end{align*}
+  which is precisely the logistic regression parametrization of $P(Y|X)$.
 \end{proof}
 \end{document}
