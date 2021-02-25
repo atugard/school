@@ -52,6 +52,13 @@
 
            
 \begin{document}
+
+\title{MAT5314: Assignment 1}
+\author{David Draguta
+  \\University of Ottawa\\ Prof: Dr. Maia Fraser } 
+ 
+\maketitle
+\section{Preliminaries}
 \begin{question}[3 points]
   In class we described the Least Squares algorithm as a learning algorithm that minimizes empirical risk.
   See PDF summary, and adopt the same notation. In at most 3 sentences answer the following question, backing up each claim you make by either naming a theorem from Linear Algebra or referring to facts from the PDF summary: Suppose $m < d < \infty$ then what can you conclude about the rank of the $d \times d$ matrix $A$ and why does this imply that there are infinitely many $w$ that minimize empirical risk? 
@@ -92,7 +99,7 @@
   \end{enumerate}
 \end{question}
 \begin{proof}
-  (PART 1) We'll find the time complexity of each subexpression, first assuming $w_n$ is cached, then not, and add them together:
+  (PART 1) We find the runtime of recursive least squares, by finding the run time of each subexpression of the following, then adding them together:
   \begin{align*}
     w_{n+1} = w_{n} +Ke_1,
   \end{align*}
@@ -138,7 +145,7 @@
   is $d^2$ dot-products of vectors of length $(n+1)$. Each dot-product takes $2n+1$ time ($n+1$ to multiply all the entries component-wise and $n$ to sum over them). This takes $d^2(2n+1)$. Inverting the product takes $d^3$, so all together this step is $d^3 + d^2(2n+1) \leq d^3 + 2d^2(n+1) \leq 2(d^3 + d^2(n+1))$, so this step is
   $O(d^3 + d^2(n+1))$.
 \item
-  Computing $\X^T\Y$: Write $\X^T = (r_i)$, where $r_i$ is the $i$th row of $\X^T$. Then, as $\X^T$ is a $d \times n+1$ matrix and $\Y$ has length $n+1$, computing $\X^T\Y = (r_i \cdot \Y)$ takes $d(2n+1) \leq 2d(n+1)$, so this step is $O(d(n+1))$.
+  Computing $\X^T\Y$: Write $\X^T = (r_i)$, where $r_i$ is the $i$th row of $\X^T$. Then, as $\X^T$ is a $d \times n+1$ matrix and $\Y$ has length $n+1$, computing $\X^T\Y = (r_i \cdot \Y)$ takes $d(2n+1) \leq 2d(n+1)$, so this step is $O(d(n+1))$s
 \item
   Computing the product: $(\X^T\X)^{-1}$ is a $d \times d$ matrix and $\X^T\Y$ has length $d$. Thus it takes $d(2d-1) \leq 2d^2$. This step is $O(d^2)$.
 \end{itemize}
@@ -216,7 +223,7 @@ Taking limits we find that the right hand side converges to $\cfrac{d+1}{d}$. Fi
     &=\sum\limits_i (\cfrac{1}{2\sigma_{i1}^2}-\cfrac{1}{2\sigma_{i0}^2})X_i^2+ (\cfrac{\mu_{i0}}{\sigma_{i0}^2}-\cfrac{\mu_{i1}}{\sigma_{i1}^2})X_i +
     (\cfrac{\mu_{i1}^2}{2\sigma_{i1}^2} - \cfrac{\mu_{i0}^2}{2\sigma_{i0}^} + \ln(\frac{\sigma_{i1}}{\sigma_{i0}}))\\
     &= \sum\limits_i \alpha_{i2} X_i^2 + \alpha_{i1} X_i + \widetilde{\alpha_{i0}},
-  \end{align*}
+  1\end{align*}
   for
   \begin{align*}
     \widetilde{\alpha_{i0}} &= \cfrac{\mu_{i1}^2}{2\sigma_{i1}^2} - \cfrac{\mu_{i0}^2}{2\sigma_{i0}^} + \ln(\frac{\sigma_{i1}}{\sigma_{i0}}), \\

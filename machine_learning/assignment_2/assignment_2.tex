@@ -1,0 +1,149 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref}
+
+\usetikzlibrary{positioning}
+
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\q}{\mathbb{Q}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\cx}{\mathbb{C}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\field}{\mathbb{F}}
+\newcommand{\ita}[1]{\textit{#1}}
+\newcommand{\com}[2]{#1\backslash#2}
+\newcommand{\oneton}{\{1,2,3,...,n\}}
+\newcommand{\abs}[1]{|#1|}
+\newcommand{\card}[1]{|#1|}
+\newcommand\idea[1]{\begin{gather*}#1\end{gather*}}
+\newcommand\ef{\ita{f} }
+\newcommand\eff{\ita{f}}
+\newcommand\proofs[1]{\begin{proof}#1\end{proof}}
+\newcommand\inv[1]{#1^{-1}}
+\newcommand\set[1]{\{#1\}}
+\newcommand\en{\ita{n }}
+\newcommand\nullity{\text{nullity}}
+\newcommand{\vbrack}[1]{\langle #1\realangle}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\res}[2]{#1\bigg\rvert_{#2}}
+\newcommand{\im}[0]{\text{im}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\spn}[0]{\text{span}}
+\newcommand{\colsp}{\text{Colsp}}
+\newcommand{\nullsp}{\text{Nullsp}}
+\newcommand{\rk}{\text{rank}}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{defn}{Definition}[thm]
+\newtheorem*{remark}{Remark}
+\newtheorem{prop}{Proposition}[thm]
+\newtheorem{example}{Example}[thm]
+\newtheorem{question}{Question}
+\newtheorem{lemma}{Lemma}[thm]
+\newtheorem{exercise}{Exercise}[thm]
+
+\hypersetup{
+  colorlinks,
+  linkcolor=blue
+}
+\setcounter{tocdepth}{3}% Show ToC content up to level 3 (\subsubsection)
+
+           
+\begin{document}
+
+\title{MAT5314: Assignment 2}
+\author{David Draguta
+  \\University of Ottawa\\ Prof: Dr. Maia Fraser } 
+ 
+\maketitle
+
+\begin{question}[3 points]
+  One common preprocessing in machine learning is to centre the data. In this problem we show this can be related to working with an (unpenalized) off-set term in the solution. Suppose we are in the Euclidean regression setting and examples come from $\X \times \Y$, where $\X=\real^d$ is input and $\Y=\real$ output. Consider the usual (Tikhonov) regularized least squares with standard inner product in $\real^d$, but now with an additional unpenalized offset term $b$,
+  \begin{align*}
+    \min\limits_{w \in \real^d, b \in \real}
+    \left\{
+    \cfrac{1}{n} \sum\limits_{i=1}^n(\langle w, x_i \rangle + b - y_i)^2 + \lambda\norm{w}^2
+    \right\}
+    ,
+  \end{align*}
+  and let $(w^*, b^*)$ be the solution of this problem. Write $E(w,b)$ for the objective function. For $i \in [n]$, denote by $x_i^c = x_i - \bar{x}, y_i^c = y_i - \bar{y}$ the centred data, where $\bar{x}, \bar{y}$ are the output and input means respectively. Consider now the following optimization
+  \begin{align*}
+    \min\limits_{w \in \real^d}
+    \left\{
+    \cfrac{1}{n} \sum\limits_{i=1}^n(\langle w, x_i^c \rangle - y_i^c)^2 + \lambda\norm{w}^2
+    \right\}
+    ,
+  \end{align*}
+  and write $E^c(w)$ for this new objective function.
+  \begin{itemize}
+  \item Show that $E(w^*, b^*) \leq E^c(w)$ for all $w \in \real^d$ (Hint: try relating the two objective functions).
+  \item Show the second optimization can be re-expressed as a constrained version of the first, where $b$ is constrained to satisfy a specific relationship with $w$.
+  \item Show that $w^*$ in fact solves the second optimization (Hint: for fixed $w$ consider $E(w,b)$ as a function of $b$ and check where its minimum occurs).
+  \end{itemize}
+  \begin{proof}
+    We have
+    \begin{align*}
+      \cfrac{1}{n}\sum\limits_{i=1}^nx_i^c = \cfrac{1}{n}\sum\limits_{i=1}^n(x_i - \bar{x}) = 0,
+    \end{align*}
+    and
+    \begin{align*}
+      \cfrac{1}{n}\sum\limits_{i=1}^ny_i^c = \cfrac{1}{n}\sum\limits_{i=1}^n(y_i - \bar{y}) = 0,
+    \end{align*}
+    thus
+    \begin{align*}
+      E(w,b) &= \cfrac{1}{n}\sum\limits_{i=1}^n(\langle w, x_i \rangle + b - y_i)^2 + \lambda \norm{w}^2 \\
+      &= \cfrac{1}{n}\sum\limits_{i=1}^n(\langle w, x_i - \bar{x} + \bar{x} \rangle + b - (y_i - \bar{y}) -\bar{y})^2 +  \lambda \norm{w}^2 \\
+      &= \cfrac{1}{n}\sum\limits_{i=1}^n(\langle w, x_i^c + \bar{x} \rangle + b - y_i^c -\bar{y})^2 +  \lambda \norm{w}^2 \\
+      &= \cfrac{1}{n}\sum\limits_{i=1}^n(\langle w, x_i^c \rangle -y_i^c + \langle w, \bar{x} \rangle + b -\bar{y})^2 +  \lambda \norm{w}^2 \\
+      &= E^c(w)
+      + 2 \cfrac{1}{n}\sum\limits_{i=1}^n(\langle w, x_i^c \rangle -y_i^c)(\langle w, \bar{x} \rangle + b -\bar{y}) \
+      + \cfrac{1}{n}\sum\limits_{i=1}^n (\langle w, \bar{x} \rangle + b -\bar{y})^2\\
+      &= E^c(w)
+      + 2 (\langle w, \cfrac{1}{n}\sum\limits_{i=1}^n x_i^c \rangle - \cfrac{1}{n}\sum\limits_{i=1}^n y_i^c)(\langle w, \bar{x} \rangle + b -\bar{y}) \
+      + (\langle w, \bar{x} \rangle + b -\bar{y})^2 \\
+      &= E^c(w) + (\langle w, \bar{x} \rangle + b -\bar{y})^2.
+    \end{align*}
+    At critical values of $E$ we have $\nabla_{w,b}E(w,b) = 0$. In particular
+    \begin{align*}
+      0 = \nabla_bE(w,b)
+      &= \nabla_b E^c(w) + \nabla_b (\langle w, \bar{x} \rangle + b -\bar{y})^2 \\
+      &= 2(\langle w, \bar{x} \rangle + b -\bar{y}),
+    \end{align*}
+    so at $(w, b^*)$ we have
+    \begin{align*}
+      \langle w, \bar{x} \rangle + b^* -\bar{y} = 0.
+    \end{align*}
+    Thus, we get
+    \begin{align*}
+      E(w^*,b^*)  \leq E(w,b^*) = E^c(w).
+    \end{align*}
+    We can express the second optimization problem as
+    \begin{align*}
+      \min\limits_{w \in \real^d, b \in \real} E(w,b) \text{ such that } \langle w, \bar{x} \rangle + b = \bar{y}.
+    \end{align*}
+    Thus, since $(w^*, b^*)$ minimizes $E(w,b)$, and since $\langle w, \bar{x} \rangle + b = \bar{y}$ holds at $(w^*, b^*)$, we see that $w^*$ indeed solves the second optimization problem.
+  \end{proof}
+  \begin{question}
+    Given training data $(x_1, y_1) = (-1, -1), (x_2, y_2) = (-0.8, 1), (x_3, y_3) = (1,1)$ is there a separating hyperplane? Suppose we nevertheless run the variant of SVM with slack variables that we posed for the non-separable case. Are there some choices of $C$ which would result in the algorithm picking a non-separating hyperplane at x = 0? Justify your answer.
+    
+  \end{question}
+  \begin{proof}
+    Our hyperplane can be a point anywhere in $(-1, -0.8)$. The point maximizing the margin is at $-0.9$. Then, everything to the left of that point has label $-1$ and to the right has label $+1$. We could also see this by using support vectors and the KKT conditions. We have support vectors $x_1, x_2$. The KKT conditions give us the following constraints on $w,b$ and $\alpha$:
+    \begin{align*}
+      w &= \alpha_1 - 0.8\alpha_2, \\
+      \alpha_1 &= \alpha_2, \\
+      -1(-w + b) &= 1 \\
+      1(-0.8w + b) &= 1 .
+    \end{align*}
+    One finds that $(w,b)=(10,9)$ is the unique solution, which corresponds to the hyperplane $H_{w,b} = \set{x: wx+b = 0} = \set{-0.9}$. 
+  \end{proof}
+\end{question}
+\begin{question}[Option B, Option C]
+  \begin{itemize}
+  \item 
+    Hand-code an SVM algorithm for the non-separable case using a general-purpose quadratic programming solver. You should use an existing package/function for the solver but not for the svm itself. Specifically, you should write a function that takes as input the data and C (the constant in $C \sum\limits_i \xi_i$ of the objective function), that calls the quadratic solver to perform the optimization we stated for the non-separable case, and then outputs the estimated $(w_*, b_*)$ as well as the size of the margin and the support vectors. Include your code, which must not only work, but be well-structured and well-commented for full marks. Now, try using your algorithm to check, for each pair of non-class attributes, is this pair sufficient to linearly separate Iris Setosa from the other species, e.g. taking just the attributes sepal width and sepal length to be $x \in X$, is Iris Setosa linearly separable? Continue like this for all 6 possible pairs. Each time you run your algorithm, also run an existing svm function to compare the results. Report and comment on your findings, in at most half a page.
+  \end{itemize}
+\end{question}
+\end{document}
