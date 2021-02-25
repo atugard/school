@@ -32,17 +32,49 @@ def P(d, n):
 #Q in the optimization problem, d is the dimension that w lives in, n is the number of data points in the sample (and therefore the number of xi_i's)
 #q^Tx = C\sum(xi_i)
 def q(d, n , C):
-    _q = np.identity(d+n+1) * C
+    _q = np.ones(d+n+1) * C
     for i in range(0, d+1):
-        _q[i][i] = 0
+        _q[i] = 0
     return _q    
 
 #Gx = -xi_i -y_i(w*x_i + b), so we need the data to implement G, where x=(w_1, \dots, w_d, b, xi_1, dots, xi_m)
-def G(data):
-    print("tbd")
+def G(_xs, _ys):
 
-#takes (x_i, y_i)    
-#def handleRows(datum)
+    #Dimension of w 
+    d=len(_xs[0])
 
+    #Number of sample points, also number of constraints xi_j
+    n=len(_xs)
+    
+    _G = np.empty((0, d+1))
+    for datum in zip(_xs,_ys):
+         label = datum[1]
+         x = datum[0]
+         x=np.array(list(map(int,x))) #convert the chars in x to integers
+         row = int(label) * np.append(x,1)
+         _G = np.vstack((_G, row))
+    return np.block([-1*_G,-1*np.identity(len(_G))])
+
+#Gx <= h if and only if y_i(w*x_i + b) >= 1 -xi_i
+def h(n):
+    return -1*np.ones(n)
+
+#lower bound on x. I only need to constrain the xi's to be non-negative, but this algorithm requires constraints on all values
+#thus I'll just put the lowest value possible for w_1, ..., w_d, b, and then 0 for the xi's
+#NOT A MATRIX, A VECTOR
+def lb(d,n):
+    _lb = np.ones(d+n+1)
+    for i in range(0,d+1):
+        #I think this is the minimal integer value. This makes it so (w,b) can be anything, as they are the first d+1 entries (d for w, and then 1 for b)
+        _lb[i] = -9223372036854775807
+    for i in range(d+1,d+n+1):
+        #This constrains the xi's to be non-negative.
+        _lb[i] = 0
+    return _lb
+
+d = len(xs[0])
+n = len(xs)
+C=2
+sol = solve_qp(P(d,n), q(d,n, C), G(xs,ys), h(n),lb=lb(d,n)) 
     
 
