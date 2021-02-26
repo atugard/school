@@ -2,6 +2,7 @@ import numpy as np
 from qpsolvers import solve_qp
 import csv
 from cvxopt import solvers
+
 # read in data
 # raw input is organized like ['TYPE', 'PW', 'PL', 'SW', 'SL']
 xs = []
@@ -26,10 +27,29 @@ with open('iris.csv') as csvDataFile:
 
 #P = (y_i x_i * y_j x_j)_{ij} is the Gram Matrix. We require that P be positive definite, which I don't think P will be for our data.
 #We can add epsilon * Identity, for epsilon some small constant, to make it positive definite.
-
+def P(inputs, labels):
+    _gram = np.empty((len(inputs),0))
+    for (label,inp) in zip(labels,inputs):
+        _gram = np.hstack((_gram, (label * np.array(inp)).reshape(-1,1)))
+    print(_gram)
+    return np.dot(_gram.T , _gram)
+        
+        
+        
 #q = (-1,-1,...,-1), m dimensional.
+def q(m):
+    return (-1)*np.ones(m)
+
+#A = ys
+#b = 0
 
 #We have lb <= alpha <= ub,
-#where lb=(0,...,0), ub=(C,...,C)
+#where lb=(0,...,0), m-dimensional
+#      ub=(C,...,C), m-dimensional
+def lb(m):
+    return np.zeros(m)
+
+def ub(m,C):
+    return C * np.ones(m)
 
 
