@@ -23,10 +23,11 @@ with open('iris.csv') as csvDataFile:
 
 #P in the optimization problem, d is such that w lives in R^d. n is the number of data points in the sample.
 #(x^T)Px = (1/2)magnitude(w)^2
-def P(d, n):
+#This matrix is not strictly positive semi-definite, added epsilon term to make it so.
+def P(d, n, epsilon):
     _P = np.identity(d+n+1)
     for i in range(d, d+n+1):
-        _P[i][i] = 0
+        _P[i][i] = epsilon
     return _P
 
 #Q in the optimization problem, d is the dimension that w lives in, n is the number of data points in the sample (and therefore the number of xi_i's)
@@ -61,7 +62,6 @@ def h(n):
 
 #lower bound on x. I only need to constrain the xi's to be non-negative, but this algorithm requires constraints on all values
 #thus I'll just put the lowest value possible for w_1, ..., w_d, b, and then 0 for the xi's
-#NOT A MATRIX, A VECTOR
 def lb(d,n):
     _lb = np.ones(d+n+1)
     for i in range(0,d+1):
@@ -72,9 +72,9 @@ def lb(d,n):
         _lb[i] = 0
     return _lb
 
-d = len(xs[0])
-n = len(xs)
-C=2
-sol = solve_qp(P(d,n), q(d,n, C), G(xs,ys), h(n),lb=lb(d,n)) 
+def solve(C, xs, ys):
+    d = len(xs[0])
+    n = len(xs)
+    return solve_qp(P(d,n, 10**(-100)), q(d,n, C), G(xs,ys), h(n),lb=lb(d,n)) 
     
 
