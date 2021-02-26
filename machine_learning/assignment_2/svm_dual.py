@@ -11,8 +11,8 @@ with open('iris.csv') as csvDataFile:
     csvReader = csv.reader(csvDataFile)
     next(csvReader, None)
     for row in csvReader:
-        xs.append(row[1:])
-        ys.append(row[0])
+        xs.append(list(map(int,row[1:])))
+        ys.append(int(row[0]))
 
 #Let m be the sample size, and d be the input dimension. 
 
@@ -27,12 +27,12 @@ with open('iris.csv') as csvDataFile:
 
 #P = (y_i x_i * y_j x_j)_{ij} is the Gram Matrix. We require that P be positive definite, which I don't think P will be for our data.
 #We can add epsilon * Identity, for epsilon some small constant, to make it positive definite.
-def P(inputs, labels):
-    _gram = np.empty((len(inputs),0))
+def P(inputs, labels,epsilon):
+    _gram = np.empty((len(inputs[0]),0))
     for (label,inp) in zip(labels,inputs):
         _gram = np.hstack((_gram, (label * np.array(inp)).reshape(-1,1)))
-    print(_gram)
-    return np.dot(_gram.T , _gram)
+    _gram = np.dot(_gram.T , _gram)
+    return _gram + epsilon * np.identity(len(_gram))
         
         
         
@@ -52,4 +52,5 @@ def lb(m):
 def ub(m,C):
     return C * np.ones(m)
 
+soln = solve_qp(P(xs,ys, 0.00001), q(len(xs)), A=np.array(ys), b=0, lb=lb(len(xs)), ub=ub(len(xs), 2))
 
