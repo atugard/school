@@ -139,7 +139,7 @@
     \end{align*}
     One finds that $(w,b)=(10,9)$ is the unique solution, which corresponds to the hyperplane $H_{w,b} = \set{x: wx+b = 0} = \set{-0.9}$.
     \bigbreak
-    As for the variant of SVM with slack variables, sure. If our hyperplane is located at $x=0$, the only point violating it's constraints is $x_2$. We could just set $\xi_2 = 1.80$, then $x_2$ would be $1-\xi_2 = 0.8$ off from the margin plane, as required (GO DEEPER INTO THIS).
+    As for the variant of SVM with slack variables, sure. If our hyperplane is located at $x=0$, the only point violating it's constraints is $x_2$. We could just set $\xi_2 = 1.80$, then $x_2$ would be $1-\xi_2 = -0.8$ off from the positive marginal hyperplane. More rigorously, in the case of a hyperplane at $x=0$, one finds $w=1, b=0$, so $y_2(x_2 \cdot w + b) = -0.8 \geq (1 - \xi_2) = -0.8$. As for the other two data points, they lie on their respective marginal hyperplanes and are thus well classified, so we could just set $\xi_1 = 0$, and $\xi_3 = 0$. This works. 
   \end{proof}
 \end{question}
 \begin{question}
@@ -156,11 +156,14 @@
     Option B. I've attached the python code with comments which implement this.
   \item
     Option C. The data is separable. Let's name the data: $(x_1,y_1) = ((1,1),1), (x_2, y_2) = ((0,2),1), (x_3,y_3) = ((0,1), -1), (x_4,y_4) =  ((1,0), -1), (x_5,y_5) = ((2,2),1), $ and $ (x_6,y_6) = ((-1,0), -1)$.
-    Then we have support vectors $x_1, x_2, x_3, x_4$. The separating hyperplane is a line with equation $y=-x+3/2$ or $(x,y) \cdot (1,1) - 3/2 = 0 $. Now, we want $x_3$ to lie on the hyperplane
-    satisfying $w \cdot x + b = -1$, so we put $\lambda((1,1) \cdot (0,1) - 3/2) = \lambda ( - 1/2) = -1$, so $\lambda = 2$. We get $w = (2,2)$, and $b = -3$. One checks that $x_1, x_2$ lie on the hyperplanes satisfying
-    $w \cdot x + b = 1$, and $x_3, x_4$ satisfies that $w \cdot x + b = -1$. We know $(3/4,3/4)$ lies on our hyperplane, and $x_1$ is a support vector, so the margin is given by
-    $\norm{x_1 - (3/4,3/4)} = \norm{(1,1) - (3/4,3/4)} = \norm{(1/4,1/4)} = 1/2\sqrt{2}$. Now, in general we are free to rescale these as we'd like (we just chose to rescale in a convenient way).
-    Thus, for $\lambda > 0$, we get $ (2\lambda, 2\lambda) \cdot (x,y) - 3 \lambda = 0$, which is the general equation of our hyperplane. If we remove $x_1$ from our sample, then our hyperplane is a horizontal line intersecting the y-axis at $3/2$. In this case,
+    We have support vectors $x_1, x_2, x_3, x_4$. The separating hyperplane is a line with equation $y=-x+3/2$ or $(x,y) \cdot (1,1) - 3/2 = 0 $. Now, we want $x_3$ to lie on the hyperplane
+    satisfying $w \cdot x + b = -1$. We have $\lambda((1,1) \cdot (0,1) - 3/2) = \lambda ( - 1/2) = -1$, which holds if and only if $\lambda = 2$. We get $w = (2,2)$, and $b = -3$. One checks that $x_1, x_2$ lie on the hyperplanes satisfying
+    $w \cdot x + b = 1$, and $x_3, x_4$ satisfying $w \cdot x + b = -1$. Now, in general we are free to rescale these as we'd like (we just chose to rescale in a convenient way).
+    Thus, for $\lambda > 0$, we get $ (2\lambda, 2\lambda) \cdot (x,y) - 3 \lambda = 0$, which is the general equation of our hyperplane. Lastly, we have that the margin of this hyperplane is
+    \begin{align*}
+      \cfrac{w \cdot x_1 + b}{\norm{w}} = \cfrac{(2,2) \cdot (1,1) - 3}{\norm{(2,2)}} = \cfrac{1}{2\sqrt{2}} 
+    \end{align*}
+    If we remove $x_1$ from our sample, then our hyperplane is a horizontal line intersecting the y-axis at $3/2$. In this case,
     the support vectors become $x_2, x_3, x_5$, and the margin is $1/2$. If we remove $x_2$, the situation is unchanged, as $x_1, x_3, x_4$ are enough to define the hyperplane of points satisfying $w \cdot x + b$, for $w, b$ defined above. If we remove $x_3$, the marginal hyperplane is a horizontal line passing through $(0, 1/2)$, with support vectors $x_1, x_4, x_6 $, and margin $1/2$. If we remove $x_4$, the situation is unchanged, as $x_1, x_2, x_3$ constrain the hyperplane to be the one defined above. In general, it's possible to remove a point and increase the margin. We just saw it above, but we could also consider the following example. Let $(0,0)$ be labeled $-1$, $(1,0)$ be labeled $+1$, and $(C,0)$ be labeled $+1$, for $C>1$. Then, if we remove $(1,0)$, and let $C \to \infty$ the margin will tend to infinity too.
 
 
