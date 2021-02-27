@@ -137,13 +137,33 @@
       -1(-w + b) &= 1 \\
       1(-0.8w + b) &= 1 .
     \end{align*}
-    One finds that $(w,b)=(10,9)$ is the unique solution, which corresponds to the hyperplane $H_{w,b} = \set{x: wx+b = 0} = \set{-0.9}$. 
+    One finds that $(w,b)=(10,9)$ is the unique solution, which corresponds to the hyperplane $H_{w,b} = \set{x: wx+b = 0} = \set{-0.9}$.
+    \bigbreak
+    As for the variant of SVM with slack variables, sure. If our hyperplane is located at $x=0$, the only point violating it's constraints is $x_2$. We could just set $\xi_2 = 1.80$, then $x_2$ would be $1-\xi_2 = 0.8$ off from the margin plane, as required (GO DEEPER INTO THIS).
   \end{proof}
 \end{question}
-\begin{question}[Option B, Option C]
+\begin{question}
   \begin{itemize}
   \item 
-    Hand-code an SVM algorithm for the non-separable case using a general-purpose quadratic programming solver. You should use an existing package/function for the solver but not for the svm itself. Specifically, you should write a function that takes as input the data and C (the constant in $C \sum\limits_i \xi_i$ of the objective function), that calls the quadratic solver to perform the optimization we stated for the non-separable case, and then outputs the estimated $(w_*, b_*)$ as well as the size of the margin and the support vectors. Include your code, which must not only work, but be well-structured and well-commented for full marks. Now, try using your algorithm to check, for each pair of non-class attributes, is this pair sufficient to linearly separate Iris Setosa from the other species, e.g. taking just the attributes sepal width and sepal length to be $x \in X$, is Iris Setosa linearly separable? Continue like this for all 6 possible pairs. Each time you run your algorithm, also run an existing svm function to compare the results. Report and comment on your findings, in at most half a page.
+    Option B. Hand-code an SVM algorithm for the non-separable case using a general-purpose quadratic programming solver. You should use an existing package/function for the solver but not for the svm itself. Specifically, you should write a function that takes as input the data and C (the constant in $C \sum\limits_i \xi_i$ of the objective function), that calls the quadratic solver to perform the optimization we stated for the non-separable case, and then outputs the estimated $(w_*, b_*)$ as well as the size of the margin and the support vectors. Include your code, which must not only work, but be well-structured and well-commented for full marks. Now, try using your algorithm to check, for each pair of non-class attributes, is this pair sufficient to linearly separate Iris Setosa from the other species, e.g. taking just the attributes sepal width and sepal length to be $x \in X$, is Iris Setosa linearly separable? Continue like this for all 6 possible pairs. Each time you run your algorithm, also run an existing svm function to compare the results. Report and comment on your findings, in at most half a page.
+  \item
+    Option C. Consider a dataset of 6 points in the plane with labels $\pm$ as follows: the points $(1,1), (2,2), (0,2)$ are label $+1$, while $(0,1),(1,0),(-1,0)$ are labeled $-1$. Are these points linearly separable? By inspection (no need to run an SVM) give equations for the maximum margin hyperplanes. Give the support vectors. For each of the support vectors, consider removing just that point from the dataset and say if and how this will change the margin. In general, for an arbitrary linearly separable dataset, if we remove one data point from the set is it possible for the margin to increase? Prove your answers, either by giving an example of a dataset where this happens, or proving it cannot happen.
   \end{itemize}
 \end{question}
+\begin{proof}
+  \begin{itemize}
+  \item
+    Option B. I've attached the python code with comments which implement this.
+  \item
+    Option C. The data is separable. Let's name the data: $(x_1,y_1) = ((1,1),1), (x_2, y_2) = ((0,2),1), (x_3,y_3) = ((0,1), -1), (x_4,y_4) =  ((1,0), -1), (x_5,y_5) = ((2,2),1), $ and $ (x_6,y_6) = ((-1,0), -1)$.
+    Then we have support vectors $x_1, x_2, x_3, x_4$. The separating hyperplane is a line with equation $y=-x+3/2$ or $(x,y) \cdot (1,1) - 3/2 = 0 $. Now, we want $x_3$ to lie on the hyperplane
+    satisfying $w \cdot x + b = -1$, so we put $\lambda((1,1) \cdot (0,1) - 3/2) = \lambda ( - 1/2) = -1$, so $\lambda = 2$. We get $w = (2,2)$, and $b = -3$. One checks that $x_1, x_2$ lie on the hyperplanes satisfying
+    $w \cdot x + b = 1$, and $x_3, x_4$ satisfies that $w \cdot x + b = -1$. We know $(3/4,3/4)$ lies on our hyperplane, and $x_1$ is a support vector, so the margin is given by
+    $\norm{x_1 - (3/4,3/4)} = \norm{(1,1) - (3/4,3/4)} = \norm{(1/4,1/4)} = 1/2\sqrt{2}$. Now, in general we are free to rescale these as we'd like (we just chose to rescale in a convenient way).
+    Thus, for $\lambda > 0$, we get $ (2\lambda, 2\lambda) \cdot (x,y) - 3 \lambda = 0$, which is the general equation of our hyperplane. If we remove $x_1$ from our sample, then our hyperplane is a horizontal line intersecting the y-axis at $3/2$. In this case,
+    the support vectors become $x_2, x_3, x_5$, and the margin is $1/2$. If we remove $x_2$, the situation is unchanged, as $x_1, x_3, x_4$ are enough to define the hyperplane of points satisfying $w \cdot x + b$, for $w, b$ defined above. If we remove $x_3$, the marginal hyperplane is a horizontal line passing through $(0, 1/2)$, with support vectors $x_1, x_4, x_6 $, and margin $1/2$. If we remove $x_4$, the situation is unchanged, as $x_1, x_2, x_3$ constrain the hyperplane to be the one defined above. In general, it's possible to remove a point and increase the margin. We just saw it above, but we could also consider the following example. Let $(0,0)$ be labeled $-1$, $(1,0)$ be labeled $+1$, and $(C,0)$ be labeled $+1$, for $C>1$. Then, if we remove $(1,0)$, and let $C \to \infty$ the margin will tend to infinity too.
+
+
+  \end{itemize}
+\end{proof}
 \end{document}
