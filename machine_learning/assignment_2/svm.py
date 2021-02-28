@@ -3,24 +3,11 @@ from cvxopt import solvers,matrix
 from sklearn import datasets
 from math import sqrt
 
+
+#===============HELPER FUNCTIONS===============
 #Simple function to calculate norm of a vector.
 def norm(w):
     return sqrt(np.dot(w,w))
-
-iris = datasets.load_iris()
-#sepal length, sepal width, petal length, petal width
-xs = iris['data']
-ys = iris['target']
-
-#label iris-setosa -1, and others +1.
-for i in range(len(ys)):
-    if(ys[i] == 0):
-        #Iris-setosa is -1
-        ys[i] = -1
-    else:
-        #The rest are 1
-        ys[i]=1
-
 
 #returns pairs sub dataset of xs of pairs i,j.
 def pairs(i,j,xs):
@@ -29,6 +16,7 @@ def pairs(i,j,xs):
         res = np.vstack((res,np.array([x[i],x[j]])))
     return res
 
+#===============QUADRATIC PROGRAMMING===============
         
 #Here is a link to see the QP set up https://cvxopt.org/userguide/coneprog.html#quadratic-programming
 
@@ -47,7 +35,7 @@ def P(xs, ys):
 def q(m):
     return matrix(-1*np.ones(m))
 
-#This is just two mxm identity matrices on top of each other, with the first scaled by -1.
+
 # G = ((-1, 0, ..., 0)
 #      (0, -1, ..., 0)
 #      (0, 0, ..., -1)
@@ -78,15 +66,18 @@ def A(ys):
 #b = (0)
 b = matrix(0,(1,1), 'd')
 
-def solve(xs,ys,C):
+def solve(data,C):
+    xs = data[0]
+    ys = data[1]
+    
     m = len(xs)
-
     alpha = solvers.qp(P(xs,ys), q(m), G(m), h(m, C), A(ys), b)['x']
     
-    w = np.zeros(len(xs[0]))
     sv_indices = []
+
+    #data to be computed and returned
+    w = np.zeros(len(xs[0]))
     support_vectors = []
-    svs = []
     b_svm  = 0
     margin = 0
     
@@ -102,11 +93,7 @@ def solve(xs,ys,C):
         w = w + (alpha[i] * ys[i] * np.array(xs[i]))
         support_vectors.append(xs[i])
         
-    # To calculate b = y_i - sum_j (alpha_j y_j (x_i * x_j))
-    # We need to find an index i such that 0 < alpha_i < C
-    # For any support vector x with corresponding 0 < alpha < C we can get the margin by
-    # abs ( w * x + b) / norm(w), so
-
+    #calculate b, margin
     for i in sv_indices:
         if(alpha[i] < C):
             b_svm = ys[i]
@@ -122,29 +109,45 @@ def solve(xs,ys,C):
             }
 
 
+#===============DATA===============
+
+#Iris data
+
+iris = datasets.load_iris()
+iris_data= [iris['data'], iris['target']]
+
+#label iris-setosa -1, and others +1.
+for i in range(len(iris_data[1])):
+    if(iris_data[1][i] == 0):
+        #Iris-setosa is -1
+        iris_data[1][i] = -1
+    else:
+        #The rest are 1
+        iris_data[1][i]=1
 
 #Data from Question 2 of assignment:
-q2_xs = np.array([[-1],[-0.8],[1]])
-q2_ys = np.array([-1,1,1])
+q2_data = [np.array([[-1],[-0.8],[1]]), np.array([-1,1,1])]
 
 #Data from Question 3 part C of assignment:
-q3c_xs = np.array([[1,1], [2,2],[0,2], [0,1],[1,0],[-1,0]])
-q3c_ys = np.array([1,1,1,-1,-1,-1])
+q3c_data = [np.array([[1,1], [2,2],[0,2], [0,1],[1,0],[-1,0]]), np.array([1,1,1,-1,-1,-1])]
+
+
+
+#===============SVM COMPUTATION===============
 
 #Constant value for expressions below
-C = 5
+C = 100000000000
 
 #Uncomment and run python -i svm.py
-solnq3c = solve(q3c_xs,q3c_ys,C)
-# solnq2 = solve(q2_xs,q2_ys,C)
-# soln = solve(xs,ys,C)
-# soln01 = solve(pairs(0,1, xs),ys,C)
-# soln02 = solve(pairs(0,2, xs),ys,C)
-# soln03 = solve(pairs(0,3, xs),ys,C)
-# soln12 = solve(pairs(1,2, xs),ys,C)
-# soln13 = solve(pairs(1,3, xs),ys,C)
-# soln23 = solve(pairs(2,3, xs),ys,C)
-
+solnq3c = solve(q3c_data,C)
+solnq2  = solve(q2_data,C)
+soln    = solve(iris_data,C)
+soln01  = solve([pairs(0,1, iris_data[0]),iris_data[1]],C)
+soln02  = solve([pairs(0,2, iris_data[0]),iris_data[1]],C)
+soln03  = solve([pairs(0,3, iris_data[0]),iris_data[1]],C)
+soln12  = solve([pairs(1,2, iris_data[0]),iris_data[1]],C)
+soln13  = solve([pairs(1,3, iris_data[0]),iris_data[1]],C)
+soln23  = solve([pairs(2,3, iris_data[0]),iris_data[1]],C)
 
 
 
