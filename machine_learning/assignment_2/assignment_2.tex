@@ -182,11 +182,11 @@
   \text{support vectors} = (1.9,0.4), (3, 1.1)$
   \bigbreak
   We find that Iris Setosa is linearly seperable from the other two in all cases except possibly when we train on sepal length and sepal width only. In that case the margin is 0.09, which
-  might be due to an error in the algorithm, so that the data might not be separable. Otherwise, the data is separable,with the highest margin when we take the full data set, and the next two highest margins
+  might be due to inaccuracies in the results produced by the quadratic program solver, so that the data might not be separable. Otherwise, the data is separable,with the highest margin when we take the full data set, and the next two highest margins
   when we train on sepal width and petal length, and petal length and petal width. We have an abnormally high amount of support vectors when we train on sepal length and petal width, and a low margin. It seems like
-  sepal length and petal width are similar across all three kinds of flower, and that perhaps most of these support vectors lie within the marginal hyperplanes (and so have non-zero slack variables). As $C$ is high, we can be confident that nevertheless they must deviate only by a little from the marginal hyperplanes.
+  sepal length and petal width are similar across all three kinds of flower, and that perhaps most of these support vectors lie within the region enclosed by the marginal hyperplanes (and so have non-zero slack variables). As $C$ is high, we can be confident that nevertheless they must deviate only by a little from the marginal hyperplanes (if they do at all).
   \bigbreak
-  \textbf{ Option C:} \bigbreak
+  \textbf{ Option C:} 
   The data is separable. Let's name the data: $(x_1,y_1) = ((1,1),1), (x_2, y_2) = ((0,2),1), (x_3,y_3) = ((0,1), -1), (x_4,y_4) =  ((1,0), -1), (x_5,y_5) = ((2,2),1), $ and $ (x_6,y_6) = ((-1,0), -1)$.
   We have support vectors $x_1, x_2, x_3, x_4$. The separating hyperplane is a line with equation $y=-x+3/2$ or $(x,y) \cdot (1,1) - 3/2 = 0 $. Now, we want $x_3$ to lie on the hyperplane
   satisfying $w \cdot x + b = -1$. We have $\lambda((1,1) \cdot (0,1) - 3/2) = \lambda ( - 1/2) = -1$, which holds if and only if $\lambda = 2$. We get $w = (2,2)$, and $b = -3$. One checks that $x_1, x_2$ lie on the hyperplanes satisfying
