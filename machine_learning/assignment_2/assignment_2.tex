@@ -139,10 +139,11 @@
     \end{align*}
     One finds that $(w,b)=(10,9)$ is the unique solution, which corresponds to the hyperplane $H_{w,b} = \set{x: wx+b = 0} = \set{-0.9}$.
     \bigbreak
-    As for the slack variables case. It turns out that at least for $C=5$ the algorithm will pick the hyperplane $x=0$. That such an answer exists makes sense,
-    since for $x=0$, $x_1, x_3$ are correctly classified, and so we can put $\xi_1, \xi_3 = 0$. We can also set $\xi_2 = 1.8$, which would yield
-    $y_i(w \cdot x_i + b) = -0.80  \geq 1-\xi_2 = -0.80$. Thus, at a first glance, it's at least reasonable to suspect such a hyperplane may exist.
-    
+    The hyperplane at $x=0$ is described by $(w,b) = (1,0)$. The SVM algorithm (you can check directly with the svm.py file submitted with this assignment. Just uncomment solnq2 and make sure C is set to 5) with slack variables returns $\alpha_3=0$ irrespective of our choice of $C$; for $0<C<50$ it returns $ \alpha_1, \alpha_2 = C$, and for  $C > 50$, it returns $ \alpha_1= \alpha_2 = 50$. We assume $C<50$, so
+    \begin{align*}
+      w = \alpha_1 y_1 x_1 + \alpha_2 y_2 x_2 = C( y_1x_1 + y_2x_2) = C( 1 - 0.80) = C/5 = 1,
+    \end{align*}
+    which holds if and only if $C=5.$
  
   \end{proof}
 \end{question}
@@ -154,23 +155,47 @@
     Option C. Consider a dataset of 6 points in the plane with labels $\pm$ as follows: the points $(1,1), (2,2), (0,2)$ are label $+1$, while $(0,1),(1,0),(-1,0)$ are labeled $-1$. Are these points linearly separable? By inspection (no need to run an SVM) give equations for the maximum margin hyperplanes. Give the support vectors. For each of the support vectors, consider removing just that point from the dataset and say if and how this will change the margin. In general, for an arbitrary linearly separable dataset, if we remove one data point from the set is it possible for the margin to increase? Prove your answers, either by giving an example of a dataset where this happens, or proving it cannot happen.
   \end{itemize}
 \end{question}
-\begin{proof}
-  \begin{itemize}
-  \item
-    Option B. I've attached the python code with comments which implement this.
-  \item
-    Option C. The data is separable. Let's name the data: $(x_1,y_1) = ((1,1),1), (x_2, y_2) = ((0,2),1), (x_3,y_3) = ((0,1), -1), (x_4,y_4) =  ((1,0), -1), (x_5,y_5) = ((2,2),1), $ and $ (x_6,y_6) = ((-1,0), -1)$.
-    We have support vectors $x_1, x_2, x_3, x_4$. The separating hyperplane is a line with equation $y=-x+3/2$ or $(x,y) \cdot (1,1) - 3/2 = 0 $. Now, we want $x_3$ to lie on the hyperplane
-    satisfying $w \cdot x + b = -1$. We have $\lambda((1,1) \cdot (0,1) - 3/2) = \lambda ( - 1/2) = -1$, which holds if and only if $\lambda = 2$. We get $w = (2,2)$, and $b = -3$. One checks that $x_1, x_2$ lie on the hyperplanes satisfying
-    $w \cdot x + b = 1$, and $x_3, x_4$ satisfying $w \cdot x + b = -1$. Now, in general we are free to rescale these as we'd like (we just chose to rescale in a convenient way).
-    Thus, for $\lambda > 0$, we get $ (2\lambda, 2\lambda) \cdot (x,y) - 3 \lambda = 0$, which is the general equation of our hyperplane. Lastly, we have that the margin of this hyperplane is
-    \begin{align*}
-      \cfrac{w \cdot x_1 + b}{\norm{w}} = \cfrac{(2,2) \cdot (1,1) - 3}{\norm{(2,2)}} = \cfrac{1}{2\sqrt{2}} 
-    \end{align*}
-    If we remove $x_1$ from our sample, then our hyperplane is a horizontal line intersecting the y-axis at $3/2$. In this case,
-    the support vectors become $x_2, x_3, x_5$, and the margin is $1/2$. If we remove $x_2$, the situation is unchanged, as $x_1, x_3, x_4$ are enough to define the hyperplane of points satisfying $w \cdot x + b$, for $w, b$ defined above. If we remove $x_3$, the marginal hyperplane is a horizontal line passing through $(0, 1/2)$, with support vectors $x_1, x_4, x_6 $, and margin $1/2$. If we remove $x_4$, the situation is unchanged, as $x_1, x_2, x_3$ constrain the hyperplane to be the one defined above. In general, it's possible to remove a point and increase the margin. We just saw it above, but we could also consider the following example. Let $(0,0)$ be labeled $-1$, $(1,0)$ be labeled $+1$, and $(C,0)$ be labeled $+1$, for $C>1$. Then, if we remove $(1,0)$, and let $C \to \infty$ the margin will tend to infinity too.
-
-
-  \end{itemize}
+\begin{proof}  \bigbreak
+  \textbf{ Option A:}
+  Let $x_0 = \text {sepal length}, x_1 = \text{sepal width}, x_2 = \text{petal length},$ and $x_3 = \text{petal width}$. To check if the pairs are linearly separable, we put a high value of C
+  (in the computations below $C = 100000000$ was used, as to drive the slack variables to zero in the minimization of the objective function.)
+  \bigbreak
+  For inputs $x_0,x_1,x_2,x_3$, we have $w_* = (0.05, -0.52, 1, 0.46), b_* = -1.45, \text{margin} = 0.82, \\
+  \text{support vectors} = (5.1,3.3,1.7,0.5), (4.5,2.3,1.3,0.3), (5.1,2.5,3,1.1)$.
+  \bigbreak
+  For $x_0, x_1$, we get $w_* = (8.57, -7.14), b_* = -23.1, \text{margin} = 0.09, \\
+  \text{support vectors} = (5.5,3.5), (4.5, 2.3), (4.9, 2.5)$.
+  \bigbreak
+  For $x_0, x_2$, we have $w_* = (0.01, 1.82), b_*=-4.53, \text{margin} = 0.55, \\
+  \text{support vectors} = (5.1,1.9), (5.1, 3)$.
+  \bigbreak
+  For $x_0, x_3$, we have $w_* = (0, 5), b_* = -4, \text{margin} = 0.2, \\
+  \text{support vectors} = (5, 0.6), (4.9,1), (5, 1), (6,1), (5.8, 1), (5.7, 1), (5.5, 1) (5, 1).$
+  \bigbreak
+  For $x_1, x_2$, we have $w_* = (-0.69, 1.26), b_* = -1.06, \text{margin} = 0.70, \\
+  \text{support vectors} = (3.4,1.9), (2.3,1.3), (2.5,3)$
+  \bigbreak
+  For $x_1, x_3$, we have $w_* = (-0.83, 3.33), b_* = -0.08, \text{margin} = 0.29, \\
+  \text{support vectors} = (2.3,0.3), (3.5, 0.6), (2.7, 1)$
+  \bigbreak
+  For $x_2, x_3$, we have $w_* = (1.29, 0.82), b_* = -3.79, \text{margin} = 0.65, \\
+  \text{support vectors} = (1.9,0.4), (3, 1.1)$
+  \bigbreak
+  Well, we find that the iris setosa is linearly seperable from the other two in all cases except possibly when we train on sepal length and sepal width only. In that case the margin is 0.09, which
+  might be due to an error in the algorithm, so that the data might not be separable. Otherwise, the data is separable,with the highest margin when we take the full data set, and the next two highest margins
+  when we train on sepal width and petal length or petal length and petal width. We have an abnormally high amount of support vectors when we train on sepal length and petal width, and a low margin. It seems like
+  sepal length and petal width are similar across all three kinds of flower, and that perhaps most of these support vectors lie within the marginal hyperplanes (and so have non-zero slack variables).
+  \bigbreak
+  \textbf{ Option C:} \bigbreak
+  The data is separable. Let's name the data: $(x_1,y_1) = ((1,1),1), (x_2, y_2) = ((0,2),1), (x_3,y_3) = ((0,1), -1), (x_4,y_4) =  ((1,0), -1), (x_5,y_5) = ((2,2),1), $ and $ (x_6,y_6) = ((-1,0), -1)$.
+  We have support vectors $x_1, x_2, x_3, x_4$. The separating hyperplane is a line with equation $y=-x+3/2$ or $(x,y) \cdot (1,1) - 3/2 = 0 $. Now, we want $x_3$ to lie on the hyperplane
+  satisfying $w \cdot x + b = -1$. We have $\lambda((1,1) \cdot (0,1) - 3/2) = \lambda ( - 1/2) = -1$, which holds if and only if $\lambda = 2$. We get $w = (2,2)$, and $b = -3$. One checks that $x_1, x_2$ lie on the hyperplanes satisfying
+  $w \cdot x + b = 1$, and $x_3, x_4$ satisfying $w \cdot x + b = -1$. Now, in general we are free to rescale these as we'd like (we just chose to rescale in a convenient way).
+  Thus, for $\lambda > 0$, we get $ (2\lambda, 2\lambda) \cdot (x,y) - 3 \lambda = 0$, which is the general equation of our hyperplane. Lastly, we have that the margin of this hyperplane is
+  \begin{align*}
+    \cfrac{w \cdot x_1 + b}{\norm{w}} = \cfrac{(2,2) \cdot (1,1) - 3}{\norm{(2,2)}} = \cfrac{1}{2\sqrt{2}} 
+  \end{align*}
+  If we remove $x_1$ from our sample, then our hyperplane is a horizontal line intersecting the y-axis at $3/2$. In this case,
+  the support vectors become $x_2, x_3, x_5$, and the margin is $1/2$. If we remove $x_2$, the situation is unchanged, as $x_1, x_3, x_4$ are enough to define the hyperplane of points satisfying $w \cdot x + b$, for $w, b$ defined above. If we remove $x_3$, the marginal hyperplane is a horizontal line passing through $(0, 1/2)$, with support vectors $x_1, x_4, x_6 $, and margin $1/2$. If we remove $x_4$, the situation is unchanged, as $x_1, x_2, x_3$ constrain the hyperplane to be the one defined above. In general, it's possible to remove a point and increase the margin. We just saw it above, but we could also consider the following example. Let $(0,0)$ be labeled $-1$, $(1,0)$ be labeled $+1$, and $(M,0)$ be labeled $+1$, for $M>1$. Then, if we remove $(1,0)$, and let $M \to \infty$ the margin will tend to infinity too.
 \end{proof}
 \end{document}

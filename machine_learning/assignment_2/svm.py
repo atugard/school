@@ -8,6 +8,7 @@ def norm(w):
     return sqrt(np.dot(w,w))
 
 iris = datasets.load_iris()
+#sepal length, sepal width, petal length, petal width
 xs = iris['data']
 ys = iris['target']
 
@@ -136,16 +137,15 @@ q3c_ys = np.array([1,1,1,-1,-1,-1])
 C = 5
 
 #Uncomment and run python -i svm.py
-solnq3c = solve(q3c_xs,q3c_ys,C)
-solnq2 = solve(q2_xs,q2_ys,C)
-soln = solve(xs,ys,C)
-soln01 = solve(pairs(0,1, xs),ys,C)
-soln02 = solve(pairs(0,2, xs),ys,C)
-soln03 = solve(pairs(0,3, xs),ys,C)
-soln12 = solve(pairs(1,2, xs),ys,C)
-soln13 = solve(pairs(1,3, xs),ys,C)
-soln23 = solve(pairs(2,3, xs),ys,C)
-
+# solnq3c = solve(q3c_xs,q3c_ys,C)
+# solnq2 = solve(q2_xs,q2_ys,C)
+# soln = solve(xs,ys,C)
+# soln01 = solve(pairs(0,1, xs),ys,C)
+# soln02 = solve(pairs(0,2, xs),ys,C)
+# soln03 = solve(pairs(0,3, xs),ys,C)
+# soln12 = solve(pairs(1,2, xs),ys,C)
+# soln13 = solve(pairs(1,3, xs),ys,C)
+# soln23 = solve(pairs(2,3, xs),ys,C)
 
 
 
