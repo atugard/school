@@ -101,24 +101,20 @@ def solve(xs,ys,C):
         w = w + (alpha[i] * ys[i] * np.array(xs[i]))
         support_vectors.append(xs[i])
         
-    # to calculate b = y_i - sum_j (alpha_j y_j (x_i * x_j))
+    # To calculate b = y_i - sum_j (alpha_j y_j (x_i * x_j))
     # We need to find an index i such that 0 < alpha_i < C
-    b_svm = 0 
+    # For any support vector x with corresponding 0 < alpha < C we can get the margin by
+    # abs ( w * x + b) / norm(w), so
+    b_svm  = 0
+    margin = 0
     for i in sv_indices:
         if(alpha[i] < C):
             b_svm = ys[i]
             for j in sv_indices:
-                print(b_svm)
                 b_svm = b_svm - (alpha[j] * ys[j] * np.dot(xs[j], xs[i]))
-            break
-
-    # For any support vector x with corresponding 0 < alpha < C we can get the margin by
-    # abs ( w * x + b) / norm(w), so
-    margin = 0
-    for i in sv_indices:
-        if (alpha[i] < C):
             margin = abs(np.dot(w,xs[i]) + b_svm)/norm(w)
             break
+
     soln.update({'w' : w,
                  'b' : b_svm,
                  'margin' : margin,
@@ -128,16 +124,18 @@ def solve(xs,ys,C):
 
 
 
-#Data from Question 3 part C of assignment:
-q3c_xs = np.array([[1,1], [2,2],[0,2], [0,1],[1,0],[-1,0]])
-q3c_ys = np.array([1,1,1,-1,-1,-1])
+#Data from Question 2 of assignment:
 q2_xs = np.array([[-1],[-0.8],[1]])
 q2_ys = np.array([-1,1,1])
 
+#Data from Question 3 part C of assignment:
+q3c_xs = np.array([[1,1], [2,2],[0,2], [0,1],[1,0],[-1,0]])
+q3c_ys = np.array([1,1,1,-1,-1,-1])
 
+#Constant value for expressions below
 C = 5
 
-#Uncomment and run python -i svm_dual.py
+#Uncomment and run python -i svm.py
 solnq3c = solve(q3c_xs,q3c_ys,C)
 solnq2 = solve(q2_xs,q2_ys,C)
 soln = solve(xs,ys,C)
@@ -147,5 +145,10 @@ soln03 = solve(pairs(0,3, xs),ys,C)
 soln12 = solve(pairs(1,2, xs),ys,C)
 soln13 = solve(pairs(1,3, xs),ys,C)
 soln23 = solve(pairs(2,3, xs),ys,C)
+
+
+
+
+
 
 

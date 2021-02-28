@@ -139,7 +139,11 @@
     \end{align*}
     One finds that $(w,b)=(10,9)$ is the unique solution, which corresponds to the hyperplane $H_{w,b} = \set{x: wx+b = 0} = \set{-0.9}$.
     \bigbreak
-    As for the variant of SVM with slack variables, sure. If our hyperplane is located at $x=0$, the only point violating it's constraints is $x_2$. We could just set $\xi_2 = 1.80$, then $x_2$ would be $1-\xi_2 = -0.8$ off from the positive marginal hyperplane. More rigorously, in the case of a hyperplane at $x=0$, one finds $w=1, b=0$, so $y_2(x_2 \cdot w + b) = -0.8 \geq (1 - \xi_2) = -0.8$. As for the other two data points, they lie on their respective marginal hyperplanes and are thus well classified, so we could just set $\xi_1 = 0$, and $\xi_3 = 0$. This works. 
+    As for the slack variables case. It turns out that at least for $C=5$ the algorithm will pick the hyperplane $x=0$. That such an answer exists makes sense,
+    since for $x=0$, $x_1, x_3$ are correctly classified, and so we can put $\xi_1, \xi_3 = 0$. We can also set $\xi_2 = 1.8$, which would yield
+    $y_i(w \cdot x_i + b) = -0.80  \geq 1-\xi_2 = -0.80$. Thus, at a first glance, it's at least reasonable to suspect such a hyperplane may exist.
+    
+ 
   \end{proof}
 \end{question}
 \begin{question}
