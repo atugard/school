@@ -183,8 +183,8 @@
   \bigbreak
   Well, we find that the iris setosa is linearly seperable from the other two in all cases except possibly when we train on sepal length and sepal width only. In that case the margin is 0.09, which
   might be due to an error in the algorithm, so that the data might not be separable. Otherwise, the data is separable,with the highest margin when we take the full data set, and the next two highest margins
-  when we train on sepal width and petal length or petal length and petal width. We have an abnormally high amount of support vectors when we train on sepal length and petal width, and a low margin. It seems like
-  sepal length and petal width are similar across all three kinds of flower, and that perhaps most of these support vectors lie within the marginal hyperplanes (and so have non-zero slack variables).
+  when we train on sepal width and petal length, and petal length and petal width. We have an abnormally high amount of support vectors when we train on sepal length and petal width, and a low margin. It seems like
+  sepal length and petal width are similar across all three kinds of flower, and that perhaps most of these support vectors lie within the marginal hyperplanes (and so have non-zero slack variables). As $C$ is high, we can be confident that nevertheless they must deviate only by a little from the marginal hyperplanes.
   \bigbreak
   \textbf{ Option C:} \bigbreak
   The data is separable. Let's name the data: $(x_1,y_1) = ((1,1),1), (x_2, y_2) = ((0,2),1), (x_3,y_3) = ((0,1), -1), (x_4,y_4) =  ((1,0), -1), (x_5,y_5) = ((2,2),1), $ and $ (x_6,y_6) = ((-1,0), -1)$.

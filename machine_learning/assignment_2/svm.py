@@ -105,7 +105,7 @@ def solve(data,C):
     return {'w' : w,
             'b' : b_svm,
             'margin' : margin,
-            'Support vectors': support_vectors
+            'Minimal support vectors': support_vectors
             }
 
 
@@ -114,7 +114,8 @@ def solve(data,C):
 #Iris data
 
 iris = datasets.load_iris()
-iris_data= [iris['data'], iris['target']]
+iris_data= [iris['data'],
+            iris['target']]
 
 #label iris-setosa -1, and others +1.
 for i in range(len(iris_data[1])):
@@ -126,28 +127,30 @@ for i in range(len(iris_data[1])):
         iris_data[1][i]=1
 
 #Data from Question 2 of assignment:
-q2_data = [np.array([[-1],[-0.8],[1]]), np.array([-1,1,1])]
+q2_data = [np.array([[-1],[-0.8],[1]]),
+           np.array([-1,1,1])]
 
 #Data from Question 3 part C of assignment:
-q3c_data = [np.array([[1,1], [2,2],[0,2], [0,1],[1,0],[-1,0]]), np.array([1,1,1,-1,-1,-1])]
+q3c_data = [np.array([[1,1], [2,2],[0,2], [0,1],[1,0],[-1,0]]),
+            np.array([1,1,1,-1,-1,-1])]
 
 
 
 #===============SVM COMPUTATION===============
 
 #Constant value for expressions below
-C = 100000000000
+C = 10000000
 
 #Uncomment and run python -i svm.py
-solnq3c = solve(q3c_data,C)
-solnq2  = solve(q2_data,C)
-soln    = solve(iris_data,C)
-soln01  = solve([pairs(0,1, iris_data[0]),iris_data[1]],C)
-soln02  = solve([pairs(0,2, iris_data[0]),iris_data[1]],C)
-soln03  = solve([pairs(0,3, iris_data[0]),iris_data[1]],C)
-soln12  = solve([pairs(1,2, iris_data[0]),iris_data[1]],C)
-soln13  = solve([pairs(1,3, iris_data[0]),iris_data[1]],C)
-soln23  = solve([pairs(2,3, iris_data[0]),iris_data[1]],C)
+#solnq2  = solve(q2_data,C)
+#solnq3c = solve(q3c_data,C)
+#soln    = solve(iris_data,C)
+#soln01  = solve([pairs(0,1, iris_data[0]),iris_data[1]],C)
+#soln02  = solve([pairs(0,2, iris_data[0]),iris_data[1]],C)
+#soln03  = solve([pairs(0,3, iris_data[0]),iris_data[1]],C)
+#soln12  = solve([pairs(1,2, iris_data[0]),iris_data[1]],C)
+#soln13  = solve([pairs(1,3, iris_data[0]),iris_data[1]],C)
+#soln23  = solve([pairs(2,3, iris_data[0]),iris_data[1]],C)
 
 
 
