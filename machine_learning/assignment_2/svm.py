@@ -66,6 +66,7 @@ def A(ys):
 #b = (0)
 b = matrix(0,(1,1), 'd')
 
+#Takes data and C, and returns w_*,b_*, the margin, and a minimal collection of support vectors.
 def solve(data,C):
     xs = data[0]
     ys = data[1]
@@ -105,14 +106,13 @@ def solve(data,C):
     return {'w' : w,
             'b' : b_svm,
             'margin' : margin,
-            'Minimal support vectors': support_vectors
+            'support vectors': support_vectors
             }
 
 
 #===============DATA===============
 
 #Iris data
-
 iris = datasets.load_iris()
 iris_data= [iris['data'],
             iris['target']]
