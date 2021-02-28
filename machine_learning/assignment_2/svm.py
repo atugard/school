@@ -12,7 +12,7 @@ iris = datasets.load_iris()
 xs = iris['data']
 ys = iris['target']
 
-#label iris-setosa -1, and others +1
+#label iris-setosa -1, and others +1.
 for i in range(len(ys)):
     if(ys[i] == 0):
         #Iris-setosa is -1
@@ -22,7 +22,7 @@ for i in range(len(ys)):
         ys[i]=1
 
 
-#returns the subdataset of xs of properties i,j
+#returns pairs sub dataset of xs of pairs i,j.
 def pairs(i,j,xs):
     res = np.empty((0,2))
     for x in xs:
@@ -84,12 +84,12 @@ def solve(xs,ys,C):
     alpha = solvers.qp(P(xs,ys), q(m), G(m), h(m, C), A(ys), b)['x']
     
     w = np.zeros(len(xs[0]))
-    
     sv_indices = []
     support_vectors = []
     svs = []
-    soln = {}
-
+    b_svm  = 0
+    margin = 0
+    
     #set small alpha's to zero, and save non-zero alpha index to sv_indices
     for i in range(len(alpha)):
         if(abs(alpha[i]) < 0.01):
@@ -106,8 +106,7 @@ def solve(xs,ys,C):
     # We need to find an index i such that 0 < alpha_i < C
     # For any support vector x with corresponding 0 < alpha < C we can get the margin by
     # abs ( w * x + b) / norm(w), so
-    b_svm  = 0
-    margin = 0
+
     for i in sv_indices:
         if(alpha[i] < C):
             b_svm = ys[i]
@@ -116,12 +115,11 @@ def solve(xs,ys,C):
             margin = abs(np.dot(w,xs[i]) + b_svm)/norm(w)
             break
 
-    soln.update({'w' : w,
-                 'b' : b_svm,
-                 'margin' : margin,
-                 'Support vectors': support_vectors
-                 })
-    return soln
+    return {'w' : w,
+            'b' : b_svm,
+            'margin' : margin,
+            'Support vectors': support_vectors
+            }
 
 
 
@@ -137,7 +135,7 @@ q3c_ys = np.array([1,1,1,-1,-1,-1])
 C = 5
 
 #Uncomment and run python -i svm.py
-# solnq3c = solve(q3c_xs,q3c_ys,C)
+solnq3c = solve(q3c_xs,q3c_ys,C)
 # solnq2 = solve(q2_xs,q2_ys,C)
 # soln = solve(xs,ys,C)
 # soln01 = solve(pairs(0,1, xs),ys,C)
